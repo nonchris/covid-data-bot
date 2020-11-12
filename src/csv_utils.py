@@ -57,6 +57,42 @@ class Writer:
             None
         else:
             open(self.file, "w").close()
+    
+    def add(self, content) -> ChatObject:
+        """
+        Handles creation of new ChatObjects no created yet
+        - Needs a telegram.chat object as input
+        - Checks if object already exists
+        - Creates new one of needed
+        - returns ChatObject
+        """
+ 
+        #if entry already exists - breaking
+        result = self.search_id(content["id"])
+        if result:
+            #print(result)
+            return result[0]
+        #logging new
+        #getting content to write
+        #keys for the telegram.chat object
+        keys = ["id", "type", "username", "first_name", "last_name"]
+        line = [] #will contain the row to add
+        for key in keys: #going trough chat object
+            line.append(f"{content[key]}")
+        
+        #adding time to entry
+        t = time.strftime("%Y-%m-%d %H:%M:%S")
+        line.append(f"{t}")
+
+        line.append(True) #seeting kreis subscription to True by default
+        for x in range(9):
+            line.append(False)
+
+        new = ChatObject(line)
+
+        self.entries.append(new)
+
+        return new
     def read(self):
         """
         Reads a whole csv file 
@@ -72,3 +108,13 @@ class Writer:
         
         #print("ENTRIES ", self.entries)
         return self.entries
+    def write(self):
+        text = ""
+        for o in self.entries:
+            text += f"{o.id};{o.type};{o.username};{o.first_name};{o.last_name};"
+            text += f"{o.first_contact};{o.kreis};{o.adenau};{o.altenahr};"
+            text += f"{o.breisig};{o.brohltal};{o.grafschaft};{o.neuenahr};"
+            text += f"{o.remagen};{o.sinzig};{o.all};\n"
+
+        with open(self.file, "w") as f:
+            f.write(text)
