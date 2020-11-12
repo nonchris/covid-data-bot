@@ -11,8 +11,10 @@ from telegram.ext import MessageHandler, Filters
 from telegram import Bot
 
 import bot_handlers as btc
+import toggle_subs as tgs
 import message_handlers as msh
 import csv_utils
+
 config = configparser.ConfigParser()
 config.read("config.ini")
 updater = Updater(token=config['credentials']['TELEGRAM_TOKEN'], use_context=True)
@@ -54,6 +56,47 @@ dispatcher.add_handler(echo_handler)
 
 caps_handler = CommandHandler('caps', btc.caps)
 dispatcher.add_handler(caps_handler)
+
+help_handler = CommandHandler('hilfe', btc.help)
+dispatcher.add_handler(help_handler)
+
+help_handler = CommandHandler('help', btc.help)
+dispatcher.add_handler(help_handler)
+
+####
+kreis_handler = CommandHandler('kreis', tgs.kreis)
+dispatcher.add_handler(kreis_handler)
+
+adenau_handler = CommandHandler('adenau', tgs.adenau)
+dispatcher.add_handler(adenau_handler)
+
+altenahr_handler = CommandHandler('altenahr', tgs.altenahr)
+dispatcher.add_handler(altenahr_handler)
+
+breisig_handler = CommandHandler('breisig', tgs.breisig)
+dispatcher.add_handler(breisig_handler)
+
+brohltal_handler = CommandHandler('brohltal', tgs.brohltal)
+dispatcher.add_handler(brohltal_handler)
+
+grafschaft_handler = CommandHandler('grafschaft', tgs.grafschaft)
+dispatcher.add_handler(grafschaft_handler)
+
+neuenahr_handler = CommandHandler('neuenahr', tgs.neuenahr)
+dispatcher.add_handler(neuenahr_handler)
+
+remagen_handler = CommandHandler('remagen', tgs.remagen)
+dispatcher.add_handler(remagen_handler)
+
+sinzig_handler = CommandHandler('sinzig', tgs.sinzig)
+dispatcher.add_handler(sinzig_handler)
+
+kreis_handler = CommandHandler('kreis', tgs.kreis)
+dispatcher.add_handler(kreis_handler)
+
+alle_handler = CommandHandler('alle', tgs.alle)
+dispatcher.add_handler(alle_handler)
+
 
 #bot.send_message(chat_id=402239048, text="Automated text")
 
