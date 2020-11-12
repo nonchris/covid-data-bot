@@ -30,8 +30,6 @@ logging.basicConfig(
         style="{",
         format="[{asctime}] [{levelname}] {message}")
 
-def start(update, context):
-	context.bot.send_message(text="Hello my dear friend :)", chat_id=update.effective_chat.id)
 
 
 @atexit.register
