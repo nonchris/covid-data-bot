@@ -24,6 +24,25 @@ Projekt handelt und ich mich noch in der Entwicklung befinde.\n\
 Um mehr Optionen zu erhalten, nutzen Sie bitte /hilfe.\b\
 Mit freundlichen Grüßen und bleiben Sie gesund!\n\
 Corona Bot Kreis Ahrweiler", chat_id=update.effective_chat.id)
+
+
+def help(update, context):
+    """The help command"""
+    context.bot.send_message(text=f"Hi, \
+das hier sind alle verfügbaren Befehle:\n\
+Mit den folgenden Commands können Sie sich für einzelne Updates anmelden:\n\
+/adenau \n/altenahr \n/breisig \n/brohltal \n/grafschaft \n/neuenahr \n\
+/remagen \n/sinzig \n\
+/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
+/alle\n-> Aboniert alle einzeln aufgeführten Updates mit nur einem Klick.\n\n\
+Sie können auf die blau hervorgehobenen Befehle draufklicken, oder diese manuell in \
+diesen Chat schicken, um den Befehl einzugeben.\n\
+Durch erneutes Eingeben eines Befehls deabonieren Sie die angegebene Kategorie.\n\n\
+Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.\n\
+Bleiben Sie gesund!\n\
+Corona Bot Kreis Ahrweiler", chat_id=update.effective_chat.id)
+
+
 def caps(update, context):
     """
     Triggered on /caps
