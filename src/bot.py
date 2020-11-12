@@ -34,6 +34,7 @@ def caps(update, context):
     print(context.args)
     context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 
+writer = csv_utils.Writer()
 
 #chats = writer.search_id(402239048)
 #print("CHATS: ",chats)
