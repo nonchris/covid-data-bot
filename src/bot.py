@@ -8,6 +8,8 @@ from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 from telegram import Bot
 
+import bot_handlers as btc
+import message_handlers as msh
 config = configparser.ConfigParser()
 config.read("config.ini")
 updater = Updater(token=config['credentials']['TELEGRAM_TOKEN'], use_context=True)
@@ -38,13 +40,16 @@ def caps(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 
 
-start_handler = CommandHandler('start', start)
+#chats = writer.search_id(402239048)
+#print("CHATS: ",chats)
+
+start_handler = CommandHandler('start', btc.start)
 dispatcher.add_handler(start_handler)
 
-echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
+echo_handler = MessageHandler(Filters.text & (~Filters.command), msh.echo)
 dispatcher.add_handler(echo_handler)
 
-caps_handler = CommandHandler('caps', caps)
+caps_handler = CommandHandler('caps', btc.caps)
 dispatcher.add_handler(caps_handler)
 
 #bot.send_message(chat_id=402239048, text="Automated text")
