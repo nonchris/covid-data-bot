@@ -32,16 +32,16 @@ def start(update, context):
 	context.bot.send_message(text="Hello my dear friend :)", chat_id=update.effective_chat.id)
 
 
-def caps(update, context):
-    text_caps = ' '.join(context.args).upper()
-    print(context.args)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 @atexit.register
 def goodbye():
     writer.write()
     print("Saved to file - stopping now")
 
 writer = csv_utils.Writer()
+#passing writer object into other files
+btc.setup(writer)
+msh.setup(writer)
+tgs.setup(writer)
 
 #chats = writer.search_id(402239048)
 #print("CHATS: ",chats)

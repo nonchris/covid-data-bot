@@ -1,3 +1,10 @@
+import csv_utils
+
+def setup(wrtr):
+    """passing csv access object to this"""
+    global writer
+    writer = wrtr
+
 def start(update, context):
     """Command triggered at /start"""
     print(context.args)
