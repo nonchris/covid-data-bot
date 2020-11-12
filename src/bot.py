@@ -1,7 +1,9 @@
 import configparser
 import logging
-import json
-import os
+import atexit
+import time
+import sys
+
 
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
@@ -10,6 +12,7 @@ from telegram import Bot
 
 import bot_handlers as btc
 import message_handlers as msh
+import csv_utils
 config = configparser.ConfigParser()
 config.read("config.ini")
 updater = Updater(token=config['credentials']['TELEGRAM_TOKEN'], use_context=True)
@@ -33,6 +36,10 @@ def caps(update, context):
     text_caps = ' '.join(context.args).upper()
     print(context.args)
     context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
+@atexit.register
+def goodbye():
+    writer.write()
+    print("Saved to file - stopping now")
 
 writer = csv_utils.Writer()
 
