@@ -28,11 +28,6 @@ logging.basicConfig(
 def start(update, context):
 	context.bot.send_message(text="Hello my dear friend :)", chat_id=update.effective_chat.id)
 
-def echo(update, context):
-    print(update.message.from_user.username)
-    print(update.message.chat)
-    print("written")
-    context.bot.send_message(chat_id=update.effective_chat.id, text="That's cool!")
 
 def caps(update, context):
     text_caps = ' '.join(context.args).upper()
