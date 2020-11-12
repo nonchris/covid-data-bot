@@ -37,6 +37,9 @@ class ChatObject:
         self.sinzig = str_to_bool(l[14])
         self.all = str_to_bool(l[15])
         #logging
+
+
+
 class Writer:
     """
     Handles all csv file accesses, like read /write /search
@@ -50,6 +53,8 @@ class Writer:
         self.file_check()
         self.entries = self.read()
         print(self.entries)
+ 
+
     def file_check(self):
         """checks if csv file exists, creates if not"""
         
@@ -93,6 +98,8 @@ class Writer:
         self.entries.append(new)
 
         return new
+
+
     def read(self):
         """
         Reads a whole csv file 
@@ -108,6 +115,18 @@ class Writer:
         
         #print("ENTRIES ", self.entries)
         return self.entries
+
+
+    def search_id(self, entry: int):
+        """Searches for a chat id in whole file"""
+
+        results = []
+        for chat in self.entries:
+            if chat.id == entry:
+                results.append(chat)
+        return results
+
+
     def write(self):
         text = ""
         for o in self.entries:
