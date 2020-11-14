@@ -16,12 +16,12 @@ import toggle_subs as tgs
 import message_handlers as msh
 import csv_utils
 
-config = configparser.ConfigParser()
-config.read("config.ini")
-updater = Updater(token=config['credentials']['TELEGRAM_TOKEN'], use_context=True)
+API_Key = os.environ['API_Key']
+
+updater = Updater(API_Key, use_context=True)
 dispatcher = updater.dispatcher
 
-bot = Bot(token=config['credentials']['TELEGRAM_TOKEN'])
+bot = Bot(token=API_Key)
 
 
 
