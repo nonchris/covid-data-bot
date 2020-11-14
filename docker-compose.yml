@@ -1,0 +1,19 @@
+---
+version: "3"
+services:
+  covid-data-bot:
+    build: .
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+       - "./data:/app/data:rw"
+    environment:
+      - UID=1000 
+      - GID=1000
+      - API_Key=
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
