@@ -1,4 +1,6 @@
 import configparser
+import threading
+import datetime
 import logging
 import atexit
 import time
@@ -16,7 +18,11 @@ import toggle_subs as tgs
 import message_handlers as msh
 import csv_utils
 
+import requester as req
+import analyzer as ana
+
 API_Key = os.environ['API_Key']
+LINK = os.environ["REQUEST_LINK"]
 
 updater = Updater(API_Key, use_context=True)
 dispatcher = updater.dispatcher
@@ -31,6 +37,22 @@ logging.basicConfig(
         style="{",
         format="[{asctime}] [{levelname}] {message}")
 
+def make_request():
+    while True:
+        rq = req.Requester(LINK)
+        if rq.success:
+            ana.Analyzer(rq.date)
+            d = datetime.datetime.now()
+            till_tomorrow = ((24 - d.hour - 1) * 60 * 60)\
+            + ((60 - d.minute - 1) * 60)\
+            + (60 - d.second)
+            time.sleep(till_tomorrow)
+
+        else:
+            time.sleep(120)
+
+req_thrd = threading.Thread(target=make_request)
+#req_thrd.start()
 
 
 @atexit.register
