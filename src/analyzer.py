@@ -30,7 +30,7 @@ class Analyzer:
 
     def read_data(self):
 
-        start_date = self.date - datetime.timedelta(self.days)
+        start_date = self.date - datetime.timedelta(self.days-1)
         for t in range(20):
             date = start_date + datetime.timedelta(t)
             try:
@@ -72,6 +72,8 @@ class Analyzer:
         self.diff = self.df.diff(axis=0)
         self.dataframes[self.city] = self.df
         self.diffframes[self.city] = self.diff
+        #print(self.df)
+        #print(self.diff)
         #print(self.dataframes)
 
 
@@ -103,7 +105,7 @@ class Analyzer:
 
         #aestetics
         plt.xticks(ticks=x_data, labels=x_data, rotation=70)
-        plt.title(f"Neuinfektionen {city}")
+        plt.title(f"Neuinfektionen {city} - Stand {self.date}")
         plt.gcf().subplots_adjust(bottom=0.28)
         
         plt.figtext(0.5, 0.02, \
