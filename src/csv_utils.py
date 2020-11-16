@@ -2,6 +2,21 @@ import time
 import csv
 import os
 
+#maps keywords to full names
+#maps longer names and .lower() to camel case
+translator = {"kreis": "kreis",
+            "adenau": "Adenau",
+            "altenahr": "Altenahr",
+            "breisig": "Bad Breisig",
+            "brohltal": "Brohltal",
+            "grafschaft": "Grafschaft",
+            "neuenahr": "Bad Neuenahr-Ahrweiler",
+            "remagen": "Remagen",
+            "sinzig": "Sinzig",
+            "all": "all",
+            "bad breisig": "Bad Breisig",
+            "bad neuenahr-ahrweiler": "Bad Neuenahr-Ahrweiler",
+            }
 
 def str_to_bool(s: str):
     status = {"True": True,
@@ -50,12 +65,12 @@ class Writer:
     """
     def __init__(self, file="data/chats.csv"):
         """
-        takes filename
+        takes filename and reads file into a list of objects
         """
         self.file = file
         self.file_check()
         self.entries = self.read()
-        print(self.entries)
+        print(f"Conneted to {len(self.entries)} chats")
  
 
     def file_check(self):

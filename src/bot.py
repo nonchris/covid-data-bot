@@ -49,7 +49,7 @@ def send_update(date):
         for chat in writer.entries:
             s = chat.settings
             if s[city.lower()]:
-                print(path)
+                #print(path)
                 bot.send_photo(chat.id, photo=open(path, 'rb'))
 
 def make_request():
@@ -94,6 +94,19 @@ dispatcher.add_handler(help_handler)
 
 help_handler = CommandHandler('help', btc.help)
 dispatcher.add_handler(help_handler)
+
+show_handler = CommandHandler('show', btc.show)
+dispatcher.add_handler(show_handler)
+
+#aliases for /show /help
+sh_handler = CommandHandler('sh', btc.show)
+dispatcher.add_handler(sh_handler)
+
+hilfe_handler = CommandHandler('hilfe', btc.help)
+dispatcher.add_handler(hilfe_handler)
+
+h_handler = CommandHandler('h', btc.help)
+dispatcher.add_handler(h_handler)
 
 ####
 kreis_handler = CommandHandler('kreis', tgs.kreis)
