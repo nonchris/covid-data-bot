@@ -75,7 +75,7 @@ class Analyzer:
         #print(self.dataframes)
 
 
-    def visualize(self, city):
+    def visualize(self, city:str) -> str: #returns path to image
 
         #print('Number of colums in Dataframe : ', len(df.columns))
         #print('Number of rows in Dataframe : ', len(df.index))
@@ -103,8 +103,22 @@ class Analyzer:
 
         #aestetics
         plt.xticks(ticks=x_data, labels=x_data, rotation=70)
-        plt.title(f"New cases in {self.city}")
-        plt.savefig(f"visuals/{self.city}-{self.date}.png", dpi=300)
+        plt.title(f"Neuinfektionen {city}")
+        plt.gcf().subplots_adjust(bottom=0.28)
+        
+        plt.figtext(0.5, 0.02, \
+"Tage ohne Aktualisierung der Daten werden ausgelassen.\n \
+Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich \
+auf der Homepage veröffentlichten Fallzahlen. \n \
+Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen. \
+Dieser Bot ist ein privates Projekt und steht in keiner Verbindung zu einer Behörde.",
+            color=("#a8a8a8"), fontsize="xx-small", ha="center") #backgroundcolor=("#dbdbdb")
+
+        plt.figtext(0.95, 0.43, "t.me/aw_covidbot", rotation="vertical",\
+                fontsize="medium", color=("#c9c9c9"), ha="center")
+        plt.savefig(path, dpi=300)
+
+        return path
 
 if __name__ == '__main__':
     ana = Analyzer(datetime.date.today())
