@@ -36,11 +36,29 @@ logging.basicConfig(
         style="{",
         format="[{asctime}] [{levelname}] {message}")
 
+
+def send_update(date):
+    cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal", \
+         "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
+
+    analyzer = ana.Analyzer(date)
+
+    for city in cities:
+        path = analyzer.visualize(city)
+
+        for chat in writer.entries:
+            s = chat.settings
+            if s[city.lower()]:
+                print(path)
+                bot.send_photo(chat.id, photo=open(path, 'rb'))
+
 def make_request():
     while True:
         rq = req.Requester(LINK)
         if rq.success:
-            ana.Analyzer(rq.date)
+
+            send_update(rq.date)
+
             d = datetime.datetime.now()
             till_tomorrow = ((24 - d.hour - 1) * 60 * 60)\
             + ((60 - d.minute - 1) * 60)\
@@ -50,9 +68,9 @@ def make_request():
         else:
             time.sleep(120)
 
-req_thrd = threading.Thread(target=make_request)
-#req_thrd.start()
 
+reqest_thrd = threading.Thread(target=make_request)
+reqest_thrd.start()
 
 
 writer = csv_utils.Writer()
@@ -61,8 +79,6 @@ btc.setup(writer)
 msh.setup(writer)
 tgs.setup(writer)
 
-#chats = writer.search_id(402239048)
-#print("CHATS: ",chats)
 
 start_handler = CommandHandler('start', btc.start)
 dispatcher.add_handler(start_handler)
@@ -117,3 +133,4 @@ dispatcher.add_handler(alle_handler)
 #bot.send_message(chat_id=402239048, text="Automated text")
 
 updater.start_polling()
+updater.idle()
