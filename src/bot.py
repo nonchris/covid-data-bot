@@ -1,6 +1,7 @@
 import configparser
+import threading
+import datetime
 import logging
-import atexit
 import time
 import sys
 import os
@@ -16,7 +17,11 @@ import toggle_subs as tgs
 import message_handlers as msh
 import csv_utils
 
+import requester as req
+import analyzer as ana
+
 API_Key = os.environ['API_Key']
+LINK = os.environ["REQUEST_LINK"]
 
 updater = Updater(API_Key, use_context=True)
 dispatcher = updater.dispatcher
@@ -32,11 +37,41 @@ logging.basicConfig(
         format="[{asctime}] [{levelname}] {message}")
 
 
+def send_update(date):
+    cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal", \
+         "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
 
-@atexit.register
-def goodbye():
-    writer.write()
-    print("Saved to file - stopping now")
+    analyzer = ana.Analyzer(date)
+
+    for city in cities:
+        path = analyzer.visualize(city)
+
+        for chat in writer.entries:
+            s = chat.settings
+            if s[city.lower()]:
+                print(path)
+                bot.send_photo(chat.id, photo=open(path, 'rb'))
+
+def make_request():
+    while True:
+        rq = req.Requester(LINK)
+        if rq.success:
+
+            send_update(rq.date)
+
+            d = datetime.datetime.now()
+            till_tomorrow = ((24 - d.hour - 1) * 60 * 60)\
+            + ((60 - d.minute - 1) * 60)\
+            + (60 - d.second)
+            time.sleep(till_tomorrow)
+
+        else:
+            time.sleep(120)
+
+
+reqest_thrd = threading.Thread(target=make_request)
+reqest_thrd.start()
+
 
 writer = csv_utils.Writer()
 #passing writer object into other files
@@ -44,8 +79,6 @@ btc.setup(writer)
 msh.setup(writer)
 tgs.setup(writer)
 
-#chats = writer.search_id(402239048)
-#print("CHATS: ",chats)
 
 start_handler = CommandHandler('start', btc.start)
 dispatcher.add_handler(start_handler)
@@ -100,3 +133,4 @@ dispatcher.add_handler(alle_handler)
 #bot.send_message(chat_id=402239048, text="Automated text")
 
 updater.start_polling()
+updater.idle()

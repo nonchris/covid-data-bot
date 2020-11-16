@@ -10,10 +10,12 @@ services:
         max-file: "10"
     volumes:
        - "./data:/app/data:rw"
+       - "./visuals:/app/visuals:rw"
     environment:
       - UID=1000 
       - GID=1000
       - API_Key=
+      - REQUEST_LINK=
     stdin_open: true
     tty: true
     restart: unless-stopped

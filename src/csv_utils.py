@@ -5,7 +5,8 @@ import os
 
 def str_to_bool(s: str):
     status = {"True": True,
-                "False": False}
+                "False": False,}
+
     try:
         return status[s]
     except KeyError as e:
@@ -26,16 +27,18 @@ class ChatObject:
         self.last_name = l[4]
         self.first_contact = l[5]
 
-        self.kreis = str_to_bool(l[6])
-        self.adenau = str_to_bool(l[7])
-        self.altenahr = str_to_bool(l[8])
-        self.breisig = str_to_bool(l[9])
-        self.brohltal = str_to_bool(l[10])
-        self.grafschaft = str_to_bool(l[11])
-        self.neuenahr = str_to_bool(l[12])
-        self.remagen = str_to_bool(l[13])
-        self.sinzig = str_to_bool(l[14])
-        self.all = str_to_bool(l[15])
+        self.settings = {
+            "kreis": str_to_bool(l[6]),
+            "adenau": str_to_bool(l[7]),
+            "altenahr": str_to_bool(l[8]),
+            "bad breisig": str_to_bool(l[9]),
+            "brohltal": str_to_bool(l[10]),
+            "grafschaft": str_to_bool(l[11]),
+            "bad neuenahr-ahrweiler": str_to_bool(l[12]),
+            "remagen": str_to_bool(l[13]),
+            "sinzig": str_to_bool(l[14]),
+            "all": str_to_bool(l[15]),
+            }
         #logging
 
 
@@ -71,7 +74,6 @@ class Writer:
         - Creates new one of needed
         - returns ChatObject
         """
- 
         #if entry already exists - breaking
         result = self.search_id(content["id"])
         if result:
@@ -96,7 +98,7 @@ class Writer:
         new = ChatObject(line)
 
         self.entries.append(new)
-
+        self.write()
         return new
 
 
@@ -129,11 +131,12 @@ class Writer:
 
     def write(self):
         text = ""
-        for o in self.entries:
-            text += f"{o.id};{o.type};{o.username};{o.first_name};{o.last_name};"
-            text += f"{o.first_contact};{o.kreis};{o.adenau};{o.altenahr};"
-            text += f"{o.breisig};{o.brohltal};{o.grafschaft};{o.neuenahr};"
-            text += f"{o.remagen};{o.sinzig};{o.all};\n"
+        for c in self.entries:
+            o = c.settings
+            text += f"{c.id};{c.type};{c.username};{c.first_name};"
+            text += f"{c.last_name};{c.first_contact};{o['kreis']};{o['adenau']};"
+            text += f"{o['altenahr']};{o['bad breisig']};{o['brohltal']};{o['grafschaft']};"
+            text += f"{o['bad neuenahr-ahrweiler']};{o['remagen']};{o['sinzig']};{o['all']};\n"
 
         with open(self.file, "w") as f:
             f.write(text)
