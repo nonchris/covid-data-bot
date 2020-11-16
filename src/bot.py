@@ -2,7 +2,6 @@ import configparser
 import threading
 import datetime
 import logging
-import atexit
 import time
 import sys
 import os
@@ -55,10 +54,6 @@ req_thrd = threading.Thread(target=make_request)
 #req_thrd.start()
 
 
-@atexit.register
-def goodbye():
-    writer.write()
-    print("Saved to file - stopping now")
 
 writer = csv_utils.Writer()
 #passing writer object into other files
