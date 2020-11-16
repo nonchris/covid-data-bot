@@ -78,6 +78,7 @@ class Writer:
         result = self.search_id(content["id"])
         if result:
             #print(result)
+            self.write()
             return result[0]
         #logging new
         #getting content to write
@@ -98,7 +99,7 @@ class Writer:
         new = ChatObject(line)
 
         self.entries.append(new)
-
+        self.write()
         return new
 
 
