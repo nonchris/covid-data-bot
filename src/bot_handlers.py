@@ -1,4 +1,5 @@
 import csv_utils
+import datetime
 
 def setup(wrtr):
     """passing csv access object to this"""
@@ -49,6 +50,40 @@ Corona Bot Kreis Ahrweiler", chat_id=update.effective_chat.id)
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
 
 
+def show(update, context):
+    city = ""
+    try:
+        #trying to get a valid keyword from args
+        #the word must be precise otherwise the filename will be faulty
+        #using the mapping dict from csv_utils
+        city = csv_utils.translator[" ".join(context.args).replace('/', '').lower()]
+
+    #if no valid input was given
+    except KeyError as ke:
+        context.bot.send_message(text="Geben Sie bitte ein gültiges Schlüsselwort ein.\n\
+Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
+Nutzen Sie /help für mehr Informationen.", chat_id=update.effective_chat.id)
+        return
+    
+    #actual part for getting and sending the graph
+    today = datetime.date.today()
+    #used to go trough the last five possible filenames
+    # -> if a day has no data yet, the bot will search his "archive"
+    for i in range(5): 
+        try: #trying to open a filename
+            date = today - datetime.timedelta(i)
+            path = f"visuals/{city}-{date}.png"
+            with open(path, "rb") as img:
+                context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
+            break #if this point is reached, a valid file is found
+        except:
+            pass #trying next file
+    #if no file was created in the last five days
+    else:
+        context.bot.send_message(text=f"Es ist kein aktueller Graph für {city} verfügbar.\n \
+Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
+Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
+Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
 
 
 def caps(update, context):
