@@ -7,11 +7,14 @@ import matplotlib.pyplot as plt
 class Analyzer:
     def __init__(self, date: datetime.date):
         self.cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal", \
-         "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen","Sinzig"]
+         "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
 
         self.date = date
 
         self.days = 20
+
+        self.dataframes = {}
+        self.diffframes = {}
 
         for city in self.cities:
             self.city = city
@@ -21,7 +24,7 @@ class Analyzer:
 
             self.calc_data()
 
-            self.visualize()
+            #self.visualize()
 
 
 
@@ -55,7 +58,8 @@ class Analyzer:
                     else: #if df is empty
                         self.df = pd.DataFrame(dt)
             except FileNotFoundError as e:
-                print(f"data/ahrweiler-{date}.json -- not found")
+                #print(f"data/ahrweiler-{date}.json -- not found")
+                pass
 
             except Exception as e:
                 print(e)
@@ -66,21 +70,27 @@ class Analyzer:
         self.df = self.df.astype(int)
         #pd.to_numeric()
         self.diff = self.df.diff(axis=0)
-        print(self.diff)
+        self.dataframes[self.city] = self.df
+        self.diffframes[self.city] = self.diff
+        #print(self.dataframes)
 
 
-    def visualize(self):
+    def visualize(self, city):
 
         #print('Number of colums in Dataframe : ', len(df.columns))
         #print('Number of rows in Dataframe : ', len(df.index))
         #print(df)
         #print(df["infected"])
+        path = f"visuals/{city}-{self.date}.png"
+
+        df = self.dataframes[city]
+        diff = self.diffframes[city]
 
         fig, ax = plt.subplots(1)
 
         #prepare data
-        x_data = self.df.index.get_level_values("date")
-        y_data = self.diff["infected"]
+        x_data = df.index.get_level_values("date")
+        y_data = diff["infected"]
 
         #colors
         # mask1 = y_data < 2
