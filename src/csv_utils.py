@@ -16,11 +16,15 @@ translator = {"kreis": "kreis",
             "all": "all",
             "bad breisig": "Bad Breisig",
             "bad neuenahr-ahrweiler": "Bad Neuenahr-Ahrweiler",
+            "bad neuenahr": "Bad Neuenahr-Ahrweiler",
+            "ahrweiler": "Bad Neuenahr-Ahrweiler",
             }
 
 def str_to_bool(s: str):
     status = {"True": True,
-                "False": False,}
+                "False": False,
+                True: True,
+                False: False}
 
     try:
         return status[s]

@@ -19,11 +19,21 @@ def start(update, context):
 
     context.bot.send_message(text=f"Hallo {name.strip()},\n\
 dieser Bot kann Ihnen täglich ein Update senden, so bald es neue Zahlen gibt.\n\
-Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates \
-Projekt handelt, welches strtig weiterentwickelt wird.\n\
-Um mehr Optionen zu erhalten, nutzen Sie bitte /hilfe.\n\
+Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates Projekt handelt.\n\
+\n\
 Mit freundlichen Grüßen und bleiben Sie gesund!\n\
 Covid Update Bot", chat_id=update.effective_chat.id)
+
+    context.bot.send_message(chat_id=update.effective_chat.id,
+text="Wählen Sie die Regionen, über die Sie täglich informiert werden möchten:\n\
+/adenau \n/altenahr \n/breisig \n/brohltal \n/grafschaft \n/neuenahr \n\
+/remagen \n/sinzig \n\
+/alle\n\
+Sie können die Befehle entweder durch drauf tippen, oder durch Eingabe in den Chat ausführen.\n\
+'Alle' abonniert alle einzeln aufgeführten Regionen mit nur einem Klick.\n\
+Der Einfacheit halber wurde die Region Bad Neuenahr-Ahrweiler als 'Neuenahr' und \
+Bad Breisig als 'Breisig' aufgeführt.\n\
+Nutzen Sie /hilfe für weitere Optionen.")
 
 
 def help(update, context):
@@ -73,6 +83,7 @@ Nutzen Sie /help für mehr Informationen.", chat_id=update.effective_chat.id)
         try: #trying to open a filename
             date = today - datetime.timedelta(i)
             path = f"visuals/{city}-{date}.png"
+            print(path)
             with open(path, "rb") as img:
                 context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
             break #if this point is reached, a valid file is found
@@ -80,7 +91,7 @@ Nutzen Sie /help für mehr Informationen.", chat_id=update.effective_chat.id)
             pass #trying next file
     #if no file was created in the last five days
     else:
-        context.bot.send_message(text=f"Es ist kein aktueller Graph für {city} verfügbar.\n \
+        context.bot.send_message(text=f"Es ist kein aktueller Graph für {city} verfügbar.\n\
 Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
 Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
 Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
