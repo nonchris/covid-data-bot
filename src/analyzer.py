@@ -1,5 +1,7 @@
 import json
 import datetime
+import logging
+import traceback
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -57,15 +59,24 @@ class Analyzer:
 
                     else: #if df is empty
                         self.df = pd.DataFrame(dt)
+
             except FileNotFoundError as e:
                 #print(f"data/ahrweiler-{date}.json -- not found")
                 pass
 
-            except Exception as e:
-                print(e)
+            except json.decoder.JSONDecodeError as e:
+                logging.error(f"Error Encoding json for {date} - {e}")
+
+            except Exception as exc:
+                traceback.print_exc(limit=None, file=None, chain=True)
+                logging.error(f"Error in Analyzer: {traceback.print_exc(limit=None,\
+                    file=None, chain=True)}")
+                
 
 
     def calc_data(self):
+        #convertig date-sting
+        self.df["date"] = pd.to_datetime(self.df["date"], format="%Y-%m-%d")
         self.df = self.df.set_index(["date", "location"])
         self.df = self.df.astype(int)
         #pd.to_numeric()
@@ -104,9 +115,10 @@ class Analyzer:
         #ax.plot(x_data, y_data, "rx", label="infected")
 
         #aestetics
-        plt.xticks(ticks=x_data, labels=x_data, rotation=70)
+        plt.xticks(ticks=x_data, rotation=70)
         plt.title(f"Neuinfektionen {city} - Stand {self.date}")
         plt.gcf().subplots_adjust(bottom=0.28)
+        #plt.gcf().autofmt_xdate()
         
         plt.figtext(0.5, 0.02, \
 "Tage ohne Aktualisierung der Daten werden ausgelassen.\n \

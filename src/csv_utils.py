@@ -1,3 +1,4 @@
+import logging
 import time
 import csv
 import os
@@ -29,7 +30,7 @@ def str_to_bool(s: str):
     try:
         return status[s]
     except KeyError as e:
-        #logging
+        logging.warning(f"Error converting {s} ({type(s)}) to bool")
         print("Error", e)
         return False
 
@@ -98,7 +99,7 @@ class Writer:
         if result:
             #print(result)
             return result[0]
-        #logging new
+
         #getting content to write
         #keys for the telegram.chat object
         keys = ["id", "type", "username", "first_name", "last_name"]
@@ -115,7 +116,7 @@ class Writer:
             line.append(False)
 
         new = ChatObject(line)
-
+        logging.info(f"New subscriber {new.first_name} {new.last_name} {new.username} {new.id}")
         self.entries.append(new)
         self.write()
         return new
