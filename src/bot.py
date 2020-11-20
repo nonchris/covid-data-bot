@@ -52,6 +52,7 @@ def send_update(date):
                 logging.info(f"Sending {city: <12} to {chat.id}")
                 #print(path)
                 bot.send_photo(chat.id, photo=open(path, 'rb'))
+                time.sleep(0.04) #block that makes sure that 30 messages per second aren't exceeded
             else:
                 logging.info(f"Ignoring {city: <11} on {chat.id} - {s[city.lower()]} ({type(s[city.lower()])}) - {s['all']} ({type(s['all'])})")
 
@@ -66,11 +67,12 @@ def make_request():
             d = datetime.datetime.now()
             till_tomorrow = ((24 - d.hour - 1) * 60 * 60)\
             + ((60 - d.minute - 1) * 60)\
-            + (60 - d.second)
+            + (60 - d.second)\
+            + (3600 * 7) #earliest request starts at 7 am
             time.sleep(till_tomorrow)
 
         else:
-            time.sleep(120)
+            time.sleep(600) #requesting all 10 minutes
 
 
 reqest_thrd = threading.Thread(target=make_request)
