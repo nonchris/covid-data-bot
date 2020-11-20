@@ -34,7 +34,7 @@ logging.basicConfig(
         filename="data/events.log",
         level= logging.INFO,
         style="{",
-        format="[{asctime}] [{levelname}] {message}")
+        format="[{asctime}] [{levelname}] [{name}] {message}")
 
 
 def send_update(date):
@@ -48,16 +48,20 @@ def send_update(date):
 
         for chat in writer.entries:
             s = chat.settings
-            if s[city.lower()]:
+            if s[city.lower()] or s["all"]:
+                logging.info(f"Sending {city: <12} to {chat.id}")
                 #print(path)
                 bot.send_photo(chat.id, photo=open(path, 'rb'))
+            else:
+                logging.info(f"Ignoring {city: <11} on {chat.id} - {s[city.lower()]} ({type(s[city.lower()])}) - {s['all']} ({type(s['all'])})")
 
 def make_request():
     while True:
         rq = req.Requester(LINK)
         if rq.success:
-
+            logging.info('Got the requested data - starting dispatch')
             send_update(rq.date)
+            logging.info("Sent all messages, sleeping until tomorrow")
 
             d = datetime.datetime.now()
             till_tomorrow = ((24 - d.hour - 1) * 60 * 60)\

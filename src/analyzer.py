@@ -1,5 +1,7 @@
 import json
 import datetime
+import logging
+import traceback
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -57,12 +59,19 @@ class Analyzer:
 
                     else: #if df is empty
                         self.df = pd.DataFrame(dt)
+
             except FileNotFoundError as e:
                 #print(f"data/ahrweiler-{date}.json -- not found")
                 pass
 
-            except Exception as e:
-                print(e)
+            except json.decoder.JSONDecodeError as e:
+                logging.error(f"Error Encoding json for {date} - {e}")
+
+            except Exception as exc:
+                traceback.print_exc(limit=None, file=None, chain=True)
+                logging.error(f"Error in Analyzer: {traceback.print_exc(limit=None,\
+                    file=None, chain=True)}")
+                
 
 
     def calc_data(self):
