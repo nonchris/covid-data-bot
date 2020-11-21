@@ -69,8 +69,8 @@ class Analyzer:
 
             except Exception as exc:
                 traceback.print_exc(limit=None, file=None, chain=True)
-                logging.error(f"Error in Analyzer: {traceback.print_exc(limit=None,\
-                    file=None, chain=True)}")
+                logging.error(f"Error in Analyzer: \
+                        {traceback.print_exc(limit=None, file=None, chain=True)}")
                 
 
 
