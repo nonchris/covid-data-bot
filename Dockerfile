@@ -2,10 +2,7 @@ ARG ARCH=
 FROM ${ARCH}python:3.8
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y \
-    python3-pip \
-    python-pandas \
-    python3-matplotlib
-
+    python3-pip
 
 
 VOLUME /app/
