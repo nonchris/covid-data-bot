@@ -142,7 +142,7 @@ dispatcher.add_handler(grafschaft_handler)
 
 #neuenahr/ahrweiler
 neuenahr_handler = CommandHandler(['abo_neuenahr', 'sub_neuenahr',\
-                     'aboneuenahr', 'subneuenahr', 'aneuenahr','abo_bad_neuenahr', 'sneuenahr'\
+                     'aboneuenahr', 'subneuenahr', 'aneuenahr','abo_bad_neuenahr', 'sneuenahr',\
                      'abo_ahrweiler', 'sub_ahrweiler',\
                      'aboahrweiler', 'subahrweiler', 'aahrweiler', 'sahrweiler'],\
                      tgs.tgl_neuenahr)
