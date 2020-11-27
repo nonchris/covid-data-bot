@@ -95,59 +95,84 @@ dispatcher.add_handler(echo_handler)
 caps_handler = CommandHandler('caps', btc.caps)
 dispatcher.add_handler(caps_handler)
 
-help_handler = CommandHandler('hilfe', btc.help)
-dispatcher.add_handler(help_handler)
 
-help_handler = CommandHandler('help', btc.help)
-dispatcher.add_handler(help_handler)
-
-show_handler = CommandHandler('show', btc.show)
+show_handler = CommandHandler(['zeig', 'show', 'zg', 'sh', 's', 'z'], btc.show)
 dispatcher.add_handler(show_handler)
 
-#aliases for /show /help
-sh_handler = CommandHandler('sh', btc.show)
-dispatcher.add_handler(sh_handler)
-
-hilfe_handler = CommandHandler('hilfe', btc.help)
+hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a'], btc.help)
 dispatcher.add_handler(hilfe_handler)
 
-h_handler = CommandHandler('h', btc.help)
-dispatcher.add_handler(h_handler)
 
 ####
-kreis_handler = CommandHandler('kreis', tgs.kreis)
+#kreis
+kreis_handler = CommandHandler(['abo_kreis', 'sub_kreis',\
+                    'abokreis', 'subkreis', 'akreis', 'skreis'],\
+                    tgs.tgl_kreis)
 dispatcher.add_handler(kreis_handler)
 
-adenau_handler = CommandHandler('adenau', tgs.adenau)
+#adenau
+adenau_handler = CommandHandler(['abo_adenau', 'sub_adenau',\
+                    'aboadenau', 'subadenau', 'aadenau', 'sadenau'],\
+                     tgs.tgl_adenau)
 dispatcher.add_handler(adenau_handler)
 
-altenahr_handler = CommandHandler('altenahr', tgs.altenahr)
+#altenahr
+altenahr_handler = CommandHandler(['abo_altenahr', 'sub_altenahr',\
+                    'aboaltenahr', 'subaltenahr', 'aaltenahr', 'saltenahr'],\
+                    tgs.tgl_altenahr)
 dispatcher.add_handler(altenahr_handler)
 
-breisig_handler = CommandHandler('breisig', tgs.breisig)
+#breisig
+breisig_handler = CommandHandler(['abo_breisig', 'sub_breisig', 'abobreisig', 'subbreisig',\
+                    'abreisig', 'abo_bad_breisig', 'sub_bad_breisig', 'sbreisig'],\
+                    tgs.tgl_breisig)
 dispatcher.add_handler(breisig_handler)
 
-brohltal_handler = CommandHandler('brohltal', tgs.brohltal)
+#brohltal
+brohltal_handler = CommandHandler(['abo_brohltal', 'sub_brohltal',\
+                     'abobrohltal', 'subbrohltal', 'abrohltal', 'sbrohltal'],\
+                     tgs.tgl_brohltal)
 dispatcher.add_handler(brohltal_handler)
 
-grafschaft_handler = CommandHandler('grafschaft', tgs.grafschaft)
+#grafschaft
+grafschaft_handler = CommandHandler(['abo_grafschaft', 'sub_grafschaft',\
+                     'abografschaft', 'subgrafschaft', 'agrafschaft', 'sgrafschaft'],\
+                    tgs.tgl_grafschaft)
 dispatcher.add_handler(grafschaft_handler)
 
-neuenahr_handler = CommandHandler('neuenahr', tgs.neuenahr)
+#neuenahr/ahrweiler
+neuenahr_handler = CommandHandler(['abo_neuenahr', 'sub_neuenahr',\
+                     'aboneuenahr', 'subneuenahr', 'aneuenahr','abo_bad_neuenahr', 'sneuenahr',\
+                     'abo_ahrweiler', 'sub_ahrweiler',\
+                     'aboahrweiler', 'subahrweiler', 'aahrweiler', 'sahrweiler'],\
+                     tgs.tgl_neuenahr)
 dispatcher.add_handler(neuenahr_handler)
 
-remagen_handler = CommandHandler('remagen', tgs.remagen)
+#remagen
+remagen_handler = CommandHandler(['abo_remagen', 'sub_remagen',\
+                    'aboremagen', 'subremagen', 'aremagen', 'sremagen'],\
+                     tgs.tgl_remagen)
 dispatcher.add_handler(remagen_handler)
 
-sinzig_handler = CommandHandler('sinzig', tgs.sinzig)
+#sinzig
+sinzig_handler = CommandHandler(['abo_sinzig', 'sub_sinzig',\
+                    'abosinzig', 'subsinzig', 'asinzig', 'ssinzig'],\
+                     tgs.tgl_sinzig)
 dispatcher.add_handler(sinzig_handler)
 
-kreis_handler = CommandHandler('kreis', tgs.kreis)
+#kreis
+kreis_handler = CommandHandler(['abo_kreis', 'sub_kreis',\
+                     'abokreis', 'subkreis', 'akreis', 'skreis'],\
+                     tgs.tgl_kreis)
 dispatcher.add_handler(kreis_handler)
 
-alle_handler = CommandHandler('alle', tgs.alle)
+#alle
+alle_handler = CommandHandler(['abo_alle', 'sub_alle',\
+                     'aboalle', 'suballe', 'aalle', 'salle'],\
+                     tgs.tgl_alle)
 dispatcher.add_handler(alle_handler)
 
+#['abo_', 'sub_', 'abo', 'sub', 'a']
 
 #bot.send_message(chat_id=402239048, text="Automated text")
 

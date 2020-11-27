@@ -6,6 +6,13 @@ def setup(wrtr):
     global writer
     writer = wrtr
 
+abo_text = "\
+/abo_adenau \n/abo_ahrweiler \n/abo_altenahr \n/abo_breisig \n/abo_brohltal \n/abo_grafschaft\
+\n/abo_neuenahr \n/abo_remagen \n/abo_sinzig \n\
+/abo_alle\n"
+    #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
+    #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
+
 def start(update, context):
     """Command triggered at /start"""
     print(context.args)
@@ -25,39 +32,33 @@ Mit freundlichen Grüßen und bleiben Sie gesund!\n\
 Covid Update Bot", chat_id=update.effective_chat.id)
 
     context.bot.send_message(chat_id=update.effective_chat.id,
-text="Wählen Sie die Regionen, über die Sie täglich informiert werden möchten:\n\
-/adenau \n/altenahr \n/breisig \n/brohltal \n/grafschaft \n/neuenahr \n\
-/remagen \n/sinzig \n\
-/alle\n\
-Sie können die Befehle entweder durch drauf tippen, oder durch Eingabe in den Chat ausführen.\n\
-'Alle' abonniert alle einzeln aufgeführten Regionen mit nur einem Klick.\n\
-Der Einfacheit halber wurde die Region Bad Neuenahr-Ahrweiler als 'Neuenahr' und \
-Bad Breisig als 'Breisig' aufgeführt.\n\
-Nutzen Sie /hilfe für weitere Optionen.")
+text=f'Wählen Sie die Regionen, über die Sie täglich informiert werden möchten:\n\
+{abo_text}\
+Bad Neuenahr und Ahrweiler versenden die selbe Grafik. \n\
+Nutzen Sie /hilfe für weitere Optionen.\n\
+Alle Befehle sind klickbar.\n')
 
 
 def help(update, context):
     """The help command"""
-    context.bot.send_message(text=f"Hallo, \
-das hier sind alle verfügbaren Befehle:\n\
-Mit den folgenden Befehlen können Sie automatische Updates zu bestimmten \
-Regionen erhalten, sobald neue Zahlen verfügbar sind:\n\
-/adenau \n/altenahr \n/breisig \n/brohltal \n/grafschaft \n/neuenahr \n\
-/remagen \n/sinzig \n\
-/alle\n-> Abonniert alle einzeln aufgeführten Updates mit nur einem Klick.\n\n\
-Sie können auf die hervorgehobenen Befehle draufklicken, oder diese manuell in \
-diesen Chat schicken, um den Befehl einzugeben.\n\
+    context.bot.send_message(text=f'Hallo, \
+das hier sind alle verfügbaren Befehle:\n\n\
+Befehle um automatische Updates zu gewählten \
+Regionen zu erhalten, sobald neue Zahlen verfügbar sind:\n\
+{abo_text}\
+Abo_alle abonniert alle Updates mit nur einem Klick.\n\n\
+Bad Neuenahr und Ahrweiler versenden die selbe Grafik. \n\
 Durch erneutes Eingeben eines Befehls deabonnieren Sie die angegebene Kategorie.\n\n\
 \
-/show Schlüsselwort oder /sh Schlüsselwort\n \
--> Ruft den aktuellsten Graphen für diese Region ab.\n \
-Die Schlüsselwörter sind die oben hervorgehobenen Worte.\n\
-Beispiel: '/sh breisig' ruft den Graphen für Bad Breisig ab.\n \
-\n\n\
+Graphen für eine Region abrufen:\n\
+/zeig Region - kurz: /z\n\
+Die Regionen sind die Namen aus den oben gelisteten Abo-Befehlen.\n\
+Beispiel: /z breisig\n\n\
+Sie können die hervorgehobenen Befehle anklicken, oder diese in \
+den Chat eingeben, um den Befehl auszuführen.\n\n\
 Bleiben Sie gesund!\n\
-Corona Bot Kreis Ahrweiler", chat_id=update.effective_chat.id)
-    #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
-    #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
+Corona Bot Kreis Ahrweiler', chat_id=update.effective_chat.id)
+
 
 
 def show(update, context):

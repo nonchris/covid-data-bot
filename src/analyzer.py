@@ -121,11 +121,12 @@ class Analyzer:
         #plt.gcf().autofmt_xdate()
         
         plt.figtext(0.5, 0.02, \
-"Tage ohne Aktualisierung der Daten werden ausgelassen.\n \
-Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich \
+'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich \
 auf der Homepage veröffentlichten Fallzahlen. \n \
+Tage ohne Aktualisierung der Daten werden ausgelassen. \
+Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n\
 Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen. \
-Dieser Bot ist ein privates Projekt und steht in keiner Verbindung zu einer Behörde.",
+Dieser Bot ist ein privates Projekt und steht in keiner Verbindung zu einer Behörde.',
             color=("#a8a8a8"), fontsize="xx-small", ha="center") #backgroundcolor=("#dbdbdb")
 
         plt.figtext(0.95, 0.43, "t.me/aw_covidbot", rotation="vertical",\

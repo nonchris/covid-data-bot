@@ -5,7 +5,7 @@ def setup(wrtr):
     global writer
     writer = wrtr
 
-def kreis(update, context):
+def tgl_kreis(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["kreis"]:
@@ -18,7 +18,7 @@ def kreis(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def adenau(update, context):
+def tgl_adenau(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["adenau"]:
@@ -32,7 +32,7 @@ def adenau(update, context):
         writer.write()
     writer.write()
 
-def altenahr(update, context):
+def tgl_altenahr(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["altenahr"]:
@@ -45,7 +45,7 @@ def altenahr(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def breisig(update, context):
+def tgl_breisig(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["bad breisig"]:
@@ -58,7 +58,7 @@ def breisig(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def brohltal(update, context):
+def tgl_brohltal(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["brohltal"]:
@@ -71,7 +71,7 @@ def brohltal(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def grafschaft(update, context):
+def tgl_grafschaft(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["grafschaft"]:
@@ -84,7 +84,7 @@ def grafschaft(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def neuenahr(update, context):
+def tgl_neuenahr(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["bad neuenahr-ahrweiler"]:
@@ -97,7 +97,7 @@ def neuenahr(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def remagen(update, context):
+def tgl_remagen(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["remagen"]:
@@ -110,8 +110,9 @@ def remagen(update, context):
                 chat_id=update.effective_chat.id)
     writer.write()
 
-def sinzig(update, context):
+def tgl_sinzig(update, context):
     #csv_utils.write(str(update.message.chat.id), "sinzig")
+    print("sz")
     chat = writer.add(update.message.chat)
     s = chat.settings
     print("sinzig: ", s["sinzig"])
@@ -130,7 +131,7 @@ def sinzig(update, context):
     writer.write()
     print()
 
-def alle(update, context):
+def tgl_alle(update, context):
     chat = writer.add(update.message.chat)
     s = chat.settings
     if s["all"]:
