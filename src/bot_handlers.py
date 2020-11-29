@@ -10,8 +10,8 @@ def setup(wrtr):
     writer = wrtr
 
 abo_text = "\
-/abo_adenau \n/abo_ahrweiler \n/abo_altenahr \n/abo_breisig \n/abo_brohltal \n/abo_grafschaft\
-\n/abo_neuenahr \n/abo_remagen \n/abo_sinzig \n\
+/abo_adenau \n/abo_altenahr \n/abo_breisig \n/abo_brohltal \n/abo_grafschaft\
+\n/abo_bad_neuenahr_ahrweiler \n/abo_remagen \n/abo_sinzig \n\
 /abo_alle\n"
     #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
@@ -55,33 +55,34 @@ dieser Bot kann Ihnen täglich ein Update senden, so bald es neue Zahlen gibt.\n
 Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates Projekt handelt.\n\
 \n\
 Mit freundlichen Grüßen und bleiben Sie gesund!\n\
-Covid Update Bot", chat_id=update.effective_chat.id)
+Covid Update Bot", reply_markup=menu_kb, chat_id=update.effective_chat.id)
 
     context.bot.send_message(chat_id=update.effective_chat.id,
-text=f'Wählen Sie die Regionen, über die Sie täglich informiert werden möchten:\n\
-{abo_text}\
-Bad Neuenahr und Ahrweiler versenden die selbe Grafik. \n\
-Nutzen Sie /hilfe für weitere Optionen.\n\
-Alle Befehle sind klickbar.\n')
+text=f'Bitte wählen Sie aus den angegebenen Optionen aus, was Sie tun möchten.\n\
+Wählen Sie die Regionen aus, zu denen Sie automatische Updates erhalten wollen:\n\
+/abonnieren\n\
+Lassen Sie sich einzelne Graphen anzeigen:\n\
+/zeig_graph\n\
+Zeigt Ihnen eine List von Befehlen an:\n\
+/hilfe\n\
+')
 
 
 def help(update, context):
     """The help command"""
     context.bot.send_message(text=f'Hallo, \
 das hier sind alle verfügbaren Befehle:\n\n\
-Befehle um automatische Updates zu gewählten \
-Regionen zu erhalten, sobald neue Zahlen verfügbar sind:\n\
-{abo_text}\
-Abo_alle abonniert alle Updates mit nur einem Klick.\n\n\
-Bad Neuenahr und Ahrweiler versenden die selbe Grafik. \n\
-Durch erneutes Eingeben eines Befehls deabonnieren Sie die angegebene Kategorie.\n\n\
+/abo - Öffnet ein Menü zur Auswahl gewünschter Abonnements.\n\
+Erneutes Eingeben eines Befehls deabonniert die angegebene Kategorie.\n\n\
 \
-Graphen für eine Region abrufen:\n\
-/zeig Region - kurz: /z\n\
-Die Regionen sind die Namen aus den oben gelisteten Abo-Befehlen.\n\
-Beispiel: /z breisig\n\n\
-Sie können die hervorgehobenen Befehle anklicken, oder diese in \
-den Chat eingeben, um den Befehl auszuführen.\n\n\
+/zeig - Öffnet einen Dialog, in dem Sie den Graphen zu einer Region abrufen können.\n\
+\n\
+Jeden Befehl, den Sie in einem Dialog finden, können Sie auch von Hand eingeben.\n\n\
+Ihnen wird das Menü nicht angezeigt?\n\
+Nutzen Sie /menu\n\
+Sie können zwischen Bot-Tatstur und normaler Tatstur mit einer Schaltfläche \
+in der Text-Zeile hin und her wechseln.\n\
+Hervorgehoben Befehle sind zudem klickbar.\n\n\
 Bleiben Sie gesund!\n\
 Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat.id)
 
@@ -117,6 +118,9 @@ def show(update, context):
             path = f"visuals/{city}-{date}.png"
             print(path)
             with open(path, "rb") as img:
+                context.bot.send_message(text='\
+            /abo   /zeig   /hilfe',\
+                                        chat_id=update.effective_chat.id)
                 context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
             break #if this point is reached, a valid file is found
         except:
