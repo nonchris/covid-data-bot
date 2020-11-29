@@ -63,18 +63,9 @@ Corona Bot Kreis Ahrweiler', chat_id=update.effective_chat.id)
 
 def show(update, context):
     city = ""
-    try:
-        #trying to get a valid keyword from args
-        #the word must be precise otherwise the filename will be faulty
-        #using the mapping dict from csv_utils
-        city = csv_utils.translator[" ".join(context.args).replace('/', '').lower()]
-
-    #if no valid input was given
-    except KeyError as ke:
-        context.bot.send_message(text="Geben Sie bitte ein gültiges Schlüsselwort ein.\n\
-Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
-Nutzen Sie /help für mehr Informationen.", chat_id=update.effective_chat.id)
-        return
+    #getting word that actually triggerd that command
+    #using the mapping dict from csv_utils
+    city = csv_utils.translator[update['message']['text'][1:].lower()]
     
     #actual part for getting and sending the graph
     today = datetime.date.today()
