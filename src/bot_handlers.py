@@ -1,6 +1,9 @@
 import csv_utils
 import datetime
 
+from telegram import KeyboardButton
+from telegram import ReplyKeyboardMarkup
+
 def setup(wrtr):
     """passing csv access object to this"""
     global writer
@@ -18,6 +21,20 @@ abo_text = "\
 menu2_kb = ReplyKeyboardMarkup([
                     ['/abonnieren'], ['/zeig_graph'], ['/hilfe'] \
                     ], one_time_keyboard=False)
+
+show_kb = ReplyKeyboardMarkup([
+                    ['/Adenau', '/Bad_Breisig', '/Brohltal'], \
+                    [ '/Grafschaft', '/Remagen', '/Sinzig'],\
+                    ['/Bad_Neuenahr_Ahrweiler'] \
+                    ], one_time_keyboard=True)
+
+abo_kb = ReplyKeyboardMarkup([
+    ['/abo_adenau', '/abo_altenahr', '/abo_brohltal'],
+    ['/abo_grafschaft', '/abo_remagen', '/abo_sinzig'],
+    ['/abo_alle', '/abo_bad_breisig'],
+    ['/abo_bad_neuenahr_ahrweiler',]
+    ], one_time_keyboard=True)
+
 def start(update, context):
     """Command triggered at /start"""
     print(context.args)
@@ -69,6 +86,15 @@ def menu_menu(update, context):
     context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
             /abo   /zeig   /hilfe',
                 reply_markup=menu2_kb, chat_id=update.effective_chat.id)
+
+def menu_show(update, context):
+    context.bot.send_message(text='Bitte wählen Sie eine Region.',
+                reply_markup=show_kb, chat_id=update.effective_chat.id)
+
+
+def menu_abo(update, context):
+    context.bot.send_message(text='Bitte wählen Sie eine Region.',
+                reply_markup=abo_kb, chat_id=update.effective_chat.id)
 
 
 def show(update, context):

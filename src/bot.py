@@ -96,6 +96,16 @@ caps_handler = CommandHandler('caps', btc.caps)
 dispatcher.add_handler(caps_handler)
 
 
+menu_show_handler = CommandHandler(['zeig_graph', 'zeig', 'show', 'zg', 'sh', 's', 'z'],\
+                    btc.menu_show)
+dispatcher.add_handler(menu_show_handler)
+
+
+menu_abo_handler = CommandHandler(['abo', 'sub', 'abonnieren'],\
+                    btc.menu_abo)
+dispatcher.add_handler(menu_abo_handler)
+
+
 menu_menu_handler = CommandHandler(['menu', 'menue'],\
                     btc.menu_menu)
 dispatcher.add_handler(menu_menu_handler)
