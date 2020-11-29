@@ -13,6 +13,11 @@ abo_text = "\
     #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
 
+#this secondary keyboard is needed to make the keyboard
+#pop up dagain when user disabled the custom keyboard and /help won't appear
+menu2_kb = ReplyKeyboardMarkup([
+                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe'] \
+                    ], one_time_keyboard=False)
 def start(update, context):
     """Command triggered at /start"""
     print(context.args)
@@ -59,6 +64,11 @@ den Chat eingeben, um den Befehl auszuführen.\n\n\
 Bleiben Sie gesund!\n\
 Corona Bot Kreis Ahrweiler', chat_id=update.effective_chat.id)
 
+
+def menu_menu(update, context):
+    context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
+            /abo   /zeig   /hilfe',
+                reply_markup=menu2_kb, chat_id=update.effective_chat.id)
 
 
 def show(update, context):

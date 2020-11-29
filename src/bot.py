@@ -96,6 +96,10 @@ caps_handler = CommandHandler('caps', btc.caps)
 dispatcher.add_handler(caps_handler)
 
 
+menu_menu_handler = CommandHandler(['menu', 'menue'],\
+                    btc.menu_menu)
+dispatcher.add_handler(menu_menu_handler)
+
 show_handler = CommandHandler(['Adenau', 'Ahrweiler', 'Breisig', 'Brohltal',\
                     'Grafschaft', 'Neuenahr', 'Remagen', 'Sinzig', \
                     'Bad_Breisig', 'Bad_Neuenahr', 'Bad_Neuenahr_Ahrweiler'\
