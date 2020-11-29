@@ -19,7 +19,11 @@ translator = {"kreis": "kreis",
             "bad neuenahr-ahrweiler": "Bad Neuenahr-Ahrweiler",
             "bad neuenahr": "Bad Neuenahr-Ahrweiler",
             "ahrweiler": "Bad Neuenahr-Ahrweiler",
-            }
+
+            "bad_breisig": "Bad Breisig",
+            "bad_neuenahr_ahrweiler": "Bad Neuenahr-Ahrweiler",
+            "bad_neuenahr": "Bad Neuenahr-Ahrweiler",
+             }
 
 def str_to_bool(s: str):
     status = {"True": True,

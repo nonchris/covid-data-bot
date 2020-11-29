@@ -1,3 +1,5 @@
+from bot_handlers import menu2_kb
+
 def setup(wrtr):
     """passing csv access object to this file"""
     global writer
@@ -5,5 +7,6 @@ def setup(wrtr):
 
 def echo(update, context):
     """Happens when somebody writes something"""
-    context.bot.send_message(chat_id=update.effective_chat.id, \
-        text="Nutzen Sie /help oder /h und /start, um mehr zu über den Bot zu erfahren.")
+    context.bot.send_message(text='Was möchten Sie machen?\n\
+            /abo   /zeig   /hilfe',
+                reply_markup=menu2_kb, chat_id=update.effective_chat.id)

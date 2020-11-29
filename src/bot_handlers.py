@@ -1,17 +1,43 @@
 import csv_utils
 import datetime
 
+from telegram import KeyboardButton
+from telegram import ReplyKeyboardMarkup
+
 def setup(wrtr):
     """passing csv access object to this"""
     global writer
     writer = wrtr
 
 abo_text = "\
-/abo_adenau \n/abo_ahrweiler \n/abo_altenahr \n/abo_breisig \n/abo_brohltal \n/abo_grafschaft\
-\n/abo_neuenahr \n/abo_remagen \n/abo_sinzig \n\
+/abo_adenau \n/abo_altenahr \n/abo_breisig \n/abo_brohltal \n/abo_grafschaft\
+\n/abo_bad_neuenahr_ahrweiler \n/abo_remagen \n/abo_sinzig \n\
 /abo_alle\n"
     #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
+
+menu_kb = ReplyKeyboardMarkup([
+                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about'] \
+                    ], one_time_keyboard=False)
+
+#this secondary keyboard is needed to make the keyboard
+#pop up dagain when user disabled the custom keyboard and /help won't appear
+menu2_kb = ReplyKeyboardMarkup([
+                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe'] \
+                    ], one_time_keyboard=False)
+
+show_kb = ReplyKeyboardMarkup([
+                    ['/Adenau', '/Bad_Breisig', '/Brohltal'], \
+                    [ '/Grafschaft', '/Remagen', '/Sinzig'],\
+                    ['/Bad_Neuenahr_Ahrweiler'] \
+                    ], one_time_keyboard=True)
+
+abo_kb = ReplyKeyboardMarkup([
+    ['/abo_adenau', '/abo_altenahr', '/abo_brohltal'],
+    ['/abo_grafschaft', '/abo_remagen', '/abo_sinzig'],
+    ['/abo_alle', '/abo_bad_breisig'],
+    ['/abo_bad_neuenahr_ahrweiler',]
+    ], one_time_keyboard=True)
 
 def start(update, context):
     """Command triggered at /start"""
@@ -29,52 +55,58 @@ dieser Bot kann Ihnen täglich ein Update senden, so bald es neue Zahlen gibt.\n
 Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates Projekt handelt.\n\
 \n\
 Mit freundlichen Grüßen und bleiben Sie gesund!\n\
-Covid Update Bot", chat_id=update.effective_chat.id)
+Covid Update Bot", reply_markup=menu_kb, chat_id=update.effective_chat.id)
 
     context.bot.send_message(chat_id=update.effective_chat.id,
-text=f'Wählen Sie die Regionen, über die Sie täglich informiert werden möchten:\n\
-{abo_text}\
-Bad Neuenahr und Ahrweiler versenden die selbe Grafik. \n\
-Nutzen Sie /hilfe für weitere Optionen.\n\
-Alle Befehle sind klickbar.\n')
+text=f'Bitte wählen Sie aus den angegebenen Optionen aus, was Sie tun möchten.\n\
+Wählen Sie die Regionen aus, zu denen Sie automatische Updates erhalten wollen:\n\
+/abonnieren\n\
+Lassen Sie sich einzelne Graphen anzeigen:\n\
+/zeig_graph\n\
+Zeigt Ihnen eine List von Befehlen an:\n\
+/hilfe\n\
+')
 
 
 def help(update, context):
     """The help command"""
     context.bot.send_message(text=f'Hallo, \
 das hier sind alle verfügbaren Befehle:\n\n\
-Befehle um automatische Updates zu gewählten \
-Regionen zu erhalten, sobald neue Zahlen verfügbar sind:\n\
-{abo_text}\
-Abo_alle abonniert alle Updates mit nur einem Klick.\n\n\
-Bad Neuenahr und Ahrweiler versenden die selbe Grafik. \n\
-Durch erneutes Eingeben eines Befehls deabonnieren Sie die angegebene Kategorie.\n\n\
+/abo - Öffnet ein Menü zur Auswahl gewünschter Abonnements.\n\
+Erneutes Eingeben eines Befehls deabonniert die angegebene Kategorie.\n\n\
 \
-Graphen für eine Region abrufen:\n\
-/zeig Region - kurz: /z\n\
-Die Regionen sind die Namen aus den oben gelisteten Abo-Befehlen.\n\
-Beispiel: /z breisig\n\n\
-Sie können die hervorgehobenen Befehle anklicken, oder diese in \
-den Chat eingeben, um den Befehl auszuführen.\n\n\
+/zeig - Öffnet einen Dialog, in dem Sie den Graphen zu einer Region abrufen können.\n\
+\n\
+Jeden Befehl, den Sie in einem Dialog finden, können Sie auch von Hand eingeben.\n\n\
+Ihnen wird das Menü nicht angezeigt?\n\
+Nutzen Sie /menu\n\
+Sie können zwischen Bot-Tatstur und normaler Tatstur mit einer Schaltfläche \
+in der Text-Zeile hin und her wechseln.\n\
+Hervorgehoben Befehle sind zudem klickbar.\n\n\
 Bleiben Sie gesund!\n\
-Corona Bot Kreis Ahrweiler', chat_id=update.effective_chat.id)
+Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat.id)
 
+
+def menu_menu(update, context):
+    context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
+            /abo   /zeig   /hilfe',
+                reply_markup=menu2_kb, chat_id=update.effective_chat.id)
+
+def menu_show(update, context):
+    context.bot.send_message(text='Bitte wählen Sie eine Region.',
+                reply_markup=show_kb, chat_id=update.effective_chat.id)
+
+
+def menu_abo(update, context):
+    context.bot.send_message(text='Bitte wählen Sie eine Region.',
+                reply_markup=abo_kb, chat_id=update.effective_chat.id)
 
 
 def show(update, context):
     city = ""
-    try:
-        #trying to get a valid keyword from args
-        #the word must be precise otherwise the filename will be faulty
-        #using the mapping dict from csv_utils
-        city = csv_utils.translator[" ".join(context.args).replace('/', '').lower()]
-
-    #if no valid input was given
-    except KeyError as ke:
-        context.bot.send_message(text="Geben Sie bitte ein gültiges Schlüsselwort ein.\n\
-Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
-Nutzen Sie /help für mehr Informationen.", chat_id=update.effective_chat.id)
-        return
+    #getting word that actually triggerd that command
+    #using the mapping dict from csv_utils
+    city = csv_utils.translator[update['message']['text'][1:].lower()]
     
     #actual part for getting and sending the graph
     today = datetime.date.today()
@@ -86,6 +118,9 @@ Nutzen Sie /help für mehr Informationen.", chat_id=update.effective_chat.id)
             path = f"visuals/{city}-{date}.png"
             print(path)
             with open(path, "rb") as img:
+                context.bot.send_message(text='\
+            /abo   /zeig   /hilfe',\
+                                        chat_id=update.effective_chat.id)
                 context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
             break #if this point is reached, a valid file is found
         except:
@@ -97,6 +132,15 @@ Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
 Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
 Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
 
+
+def about(update, context):
+    context.bot.send_message(text='Dieser Bot ist ein Open Source Projekt.\n\
+Das bedeutet, dass Sie den gesamten Quelltext online einsehen können.\n\
+Dieses Projekt steht weder mit dem Kreis Ahrweiler, \
+noch einer anderen Behörde in Verbindung.\n\
+Für Richtigkeit und Vollständigkeit der Daten wird keine Haftung übernommen.\n\
+https://github.com/nonchris/covid-data-bot', \
+        chat_id=update.effective_chat.id, reply_markup=menu_kb)
 
 def caps(update, context):
     """
