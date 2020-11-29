@@ -29,7 +29,6 @@ dispatcher = updater.dispatcher
 bot = Bot(token=API_Key)
 
 
-
 logging.basicConfig(
         filename="data/events.log",
         level= logging.INFO,
@@ -116,9 +115,13 @@ show_handler = CommandHandler(['Adenau', 'Ahrweiler', 'Breisig', 'Brohltal',\
                     ], btc.show)
 dispatcher.add_handler(show_handler)
 
+
 hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a'], btc.help)
 dispatcher.add_handler(hilfe_handler)
 
+
+about_handler = CommandHandler('about', btc.about)
+dispatcher.add_handler(about_handler)
 
 ####
 #kreis

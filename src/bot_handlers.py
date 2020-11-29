@@ -16,6 +16,10 @@ abo_text = "\
     #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
 
+menu_kb = ReplyKeyboardMarkup([
+                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about'] \
+                    ], one_time_keyboard=False)
+
 #this secondary keyboard is needed to make the keyboard
 #pop up dagain when user disabled the custom keyboard and /help won't appear
 menu2_kb = ReplyKeyboardMarkup([
@@ -79,7 +83,7 @@ Beispiel: /z breisig\n\n\
 Sie können die hervorgehobenen Befehle anklicken, oder diese in \
 den Chat eingeben, um den Befehl auszuführen.\n\n\
 Bleiben Sie gesund!\n\
-Corona Bot Kreis Ahrweiler', chat_id=update.effective_chat.id)
+Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat.id)
 
 
 def menu_menu(update, context):
@@ -124,6 +128,15 @@ Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
 Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
 Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
 
+
+def about(update, context):
+    context.bot.send_message(text='Dieser Bot ist ein Open Source Projekt.\n\
+Das bedeutet, dass Sie den gesamten Quelltext online einsehen können.\n\
+Dieses Projekt steht weder mit dem Kreis Ahrweiler, \
+noch einer anderen Behörde in Verbindung.\n\
+Für Richtigkeit und Vollständigkeit der Daten wird keine Haftung übernommen.\n\
+https://github.com/nonchris/covid-data-bot', \
+        chat_id=update.effective_chat.id, reply_markup=menu_kb)
 
 def caps(update, context):
     """
