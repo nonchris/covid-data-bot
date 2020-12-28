@@ -1,5 +1,7 @@
 data/
+chats.csv
 visuals/
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
