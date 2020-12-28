@@ -44,9 +44,13 @@ def send_update(date):
         for chat in writer.entries:
             s = chat.settings
             if s[city.lower()] or s["all"]:
-                logging.info(f"Sending {city: <12} to {chat.id}")
                 #print(path)
-                bot.send_photo(chat.id, photo=open(path, 'rb'))
+                try:
+                    logging.info(f"SENDING {city: <12} to {chat.id}")
+                    bot.send_photo(chat.id, photo=open(path, 'rb'))
+                except error.Unauthorized:
+                    logging.info(f"Blocked by {chat.username: <12} {chat.id} - passing")
+
                 time.sleep(0.04) #block that makes sure that 30 messages per second aren't exceeded
             else:
                 logging.info(f"Ignoring {city: <11} on {chat.id} - {s[city.lower()]} ({type(s[city.lower()])}) - {s['all']} ({type(s['all'])})")
@@ -67,7 +71,8 @@ def make_request():
             time.sleep(till_tomorrow)
 
         else:
-            time.sleep(600) #requesting all 10 minutes
+            logging.info("No new data - sleeping for one hour")
+            time.sleep(3600) #requesting every hour
 
 
 reqest_thrd = threading.Thread(target=make_request)
