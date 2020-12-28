@@ -2,6 +2,7 @@ import threading
 import datetime
 import logging
 import time
+import os
 
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
@@ -19,6 +20,7 @@ import analyzer as ana
 
 API_Key = os.environ['API_Key']
 LINK = os.environ["REQUEST_LINK"]
+OWNER_USERNAME = os.environ["OWNER_USERNAME"]
 
 updater = Updater(API_Key, use_context=True)
 dispatcher = updater.dispatcher
