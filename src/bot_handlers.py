@@ -66,6 +66,7 @@ Lassen Sie sich einzelne Graphen anzeigen:\n\
 Zeigt Ihnen eine List von Befehlen an:\n\
 /hilfe\n\
 ')
+    writer.add(update.message.chat)
 
 
 def help(update, context):
