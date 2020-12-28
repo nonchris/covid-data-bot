@@ -16,6 +16,7 @@ services:
       - GID=1000
       - API_Key=
       - REQUEST_LINK=
+      - OWNER_USERNAME=
     stdin_open: true
     tty: true
     restart: unless-stopped
