@@ -1,11 +1,7 @@
-import configparser
 import threading
 import datetime
 import logging
 import time
-import sys
-import os
-
 
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
