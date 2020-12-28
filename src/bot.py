@@ -13,6 +13,7 @@ from telegram import error
 import bot_handlers as btc
 import toggle_subs as tgs
 import message_handlers as msh
+import mod_commands as mdc
 import csv_utils
 
 import requester as req
@@ -87,6 +88,7 @@ writer = csv_utils.Writer()
 btc.setup(writer)
 msh.setup(writer)
 tgs.setup(writer)
+mdc.setup(writer)
 
 
 start_handler = CommandHandler('start', btc.start)
@@ -126,6 +128,9 @@ dispatcher.add_handler(hilfe_handler)
 
 about_handler = CommandHandler('about', btc.about)
 dispatcher.add_handler(about_handler)
+
+notify_handler = CommandHandler("notify", mdc.notify_all)
+dispatcher.add_handler(notify_handler)
 
 ####
 #kreis
