@@ -3,6 +3,7 @@ import datetime
 import logging
 import traceback
 
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -94,18 +95,27 @@ class Analyzer:
 
         fig, ax = plt.subplots(1)
 
-        #prepare data
-        x_data = df.index.get_level_values("date")
-        y_data = diff["infected"]
+        # prepare data
+        x_data_infected = df.index.get_level_values("date")
+        y_data_infected = diff["infected"]
 
+        # plotting data
+        fig = plt.bar(x_data_infected, y_data_infected, width=0.8, color=("#e31102"))
 
-        #plotting data
-        fig = plt.bar(x_data, y_data, width=0.8, color=("#e31102"))
-        #fig = plt.bar(x_data[mask2], y_data[mask2], width=0.8, color=("r"))
-        #ax.plot(x_data, y_data, "rx", label="infected")
+        # appearance
 
-        #aestetics
-        plt.xticks(ticks=x_data, rotation=70)
+        # setting x-labels
+        plt.xticks(ticks=x_data_infected, rotation=70)
+
+        # setting y-axis scale
+        plt.yticks(np.arange(0, y_data_infected.max() + 1, step=2))
+
+        # grid
+        ax.grid(axis="y", which='major', color=("#bdbdbd"),
+                linewidth=0.4, linestyle="-")
+        ax.set_axisbelow(True)
+
+        # extending plot for disclaimer
         plt.title(f"Neuinfektionen {city} - Stand {self.date}")
         plt.gcf().subplots_adjust(bottom=0.28)
         #plt.gcf().autofmt_xdate()
