@@ -97,6 +97,76 @@ class Analyzer:
         #print(self.diff)
         #print(self.dataframes)
 
+
+    def is_missing(self, df: pd.DataFrame, date: datetime.date, counter: int) -> int:
+        """
+        Checks for missing data from a certain date on backwards
+        Built recursive - will call itself until day with data is reached
+        -> returns number of missing dates
+        """
+
+        try:
+            # trying to get data
+            x = df.loc[pd.to_datetime(pd.to_datetime(datetime.date.today() - date))]
+
+            # if code runs trough at the first try - preventing divide by zero error
+            if counter == 0:
+                counter = 1
+            return counter
+
+        # if data is missing, a KeyError will be raised
+        # -> catching and trying for next day
+        except KeyError:
+            # keeping track of missing days
+            counter += 1
+            # calling function again for next day
+            counter = self.is_missing(df, date - datetime.timedelta(1), counter)
+
+            # passing counter up
+            return counter
+
+
+    def incidence(self, city: str) -> int: # returns incidence value
+        """
+        Makes a copy of city array and cuts last seven days cut
+        Checks if eight day got data, if not the case:
+            Dividing seventh days value by number of days missing, to approximate
+            how many cases have "really" occurred at that day
+        Then all days will be summed up and the incidence will be calculated
+        Does not cover the edge case when days last days and 8+ were empty
+        -> dividing 'oldest' number in seven days array by number of days 8+
+        -> divider will be to small by days missing at the end of the seven days array
+
+        Return: Incidence rounded to two decimal places
+        """
+
+        days = self.diffframes[city].copy()
+
+        # getting date from 7 days ago
+        seven_days_ago = pd.to_datetime(datetime.date.today() - datetime.timedelta(7))
+
+        # cutting last seven days out
+        seven_days = days.loc[seven_days_ago: pd.Timestamp("today")]
+
+        # checking if eighth day was missing
+        divider = self.is_missing(days, datetime.timedelta(8), 0)
+
+        # getting date of day seven - need that date type
+        last_index = seven_days.index.get_level_values("date")[0]
+
+        # approximating last days infections
+        days.loc[last_index]["infected"] = days.loc[last_index]["infected"] / 2 # divider
+
+        # sum of all seven days
+        summed = seven_days["infected"].sum()
+
+        # actual incidence
+        incidence = summed * 100000 / self.population[city]
+
+        # return rounded value
+        return round(incidence, 2)
+
+
     def visualize(self, city: str) -> str:  # returns path to image
 
         #print('Number of colums in Dataframe : ', len(df.columns))
