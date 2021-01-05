@@ -13,6 +13,20 @@ class Analyzer:
         self.cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal", \
                        "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
 
+        #Source: https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025
+        #Numbers are from 31.12.2019
+        self.population = {
+            "Adenau": 13022,
+            "Altenahr": 10910,
+            "Bad Breisig": 13530,
+            "Brohltal": 18433,
+            "Grafschaft": 10977,
+            "Bad Neuenahr-Ahrweiler": 28468,
+            "Remagen": 17116,
+            "Sinzig": 17630
+
+        }
+
         self.date = date
 
         self.days = 20
@@ -115,8 +129,13 @@ class Analyzer:
                 linewidth=0.4, linestyle="-")
         ax.set_axisbelow(True)
 
+        #getting incidence
+        incidence = self.incidence(city)
+
         # extending plot for disclaimer
-        plt.title(f"Neuinfektionen {city} - Stand {self.date}")
+        plt.title(f"Neuinfektionen {city} - Stand {self.date}\n"
+                  f"Inzidenz: {incidence}")
+
         plt.gcf().subplots_adjust(bottom=0.28)
         #plt.gcf().autofmt_xdate()
 
@@ -137,4 +156,5 @@ Dieser Bot ist ein privates Projekt und steht in keiner Verbindung zu einer Beh√
 
 
 if __name__ == '__main__':
-    ana = Analyzer(datetime.date.today())
+    ana = Analyzer(datetime.date.today() - datetime.timedelta(1))
+    ana.incidence("Sinzig")
