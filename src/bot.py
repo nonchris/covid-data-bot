@@ -123,12 +123,15 @@ show_handler = CommandHandler(['Adenau', 'Ahrweiler', 'Breisig', 'Brohltal',\
 dispatcher.add_handler(show_handler)
 
 
-hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a'], btc.help)
+hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a', 'mehr', 'more'], btc.help)
 dispatcher.add_handler(hilfe_handler)
 
 
 about_handler = CommandHandler('about', btc.about)
 dispatcher.add_handler(about_handler)
+
+methods_handler = CommandHandler(["methods", "methoden", "berechnung"], btc.methods)
+dispatcher.add_handler(methods_handler)
 
 notify_handler = CommandHandler("notify", mdc.notify_all)
 dispatcher.add_handler(notify_handler)
