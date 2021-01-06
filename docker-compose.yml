@@ -17,6 +17,7 @@ services:
       - API_Key=
       - REQUEST_LINK=
       - OWNER_USERNAME=
+      - REQUEST_INTERVAL_SECONDS=600
     stdin_open: true
     tty: true
     restart: unless-stopped

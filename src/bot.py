@@ -22,6 +22,7 @@ import analyzer as ana
 API_Key = os.environ['API_Key']
 LINK = os.environ["REQUEST_LINK"]
 OWNER_USERNAME = os.environ["OWNER_USERNAME"]
+REQUEST_INTERVAL = int(os.environ["REQUEST_INTERVAL_SECONDS"])
 
 updater = Updater(API_Key, use_context=True)
 dispatcher = updater.dispatcher
@@ -75,8 +76,8 @@ def make_request():
             time.sleep(till_tomorrow)
 
         else:
-            logging.info("No new data - sleeping for one hour")
-            time.sleep(3600) #requesting every hour
+            logging.info(f"No new data - sleeping for {round(REQUEST_INTERVAL / 60)} minutes")
+            time.sleep(REQUEST_INTERVAL) #requesting every hour
 
 
 reqest_thrd = threading.Thread(target=make_request)
