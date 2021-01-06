@@ -203,8 +203,9 @@ class Analyzer:
         incidence = self.incidence(city)
 
         # extending plot for disclaimer
-        plt.title(f"Neuinfektionen {city} - Stand {self.date}\n"
-                  f"Inzidenz: {incidence}")
+        plt.title(f"Neuinfektionen {city} - Stand {self.date}\n")
+
+        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#999999"))
 
         plt.gcf().subplots_adjust(bottom=0.28)
         #plt.gcf().autofmt_xdate()

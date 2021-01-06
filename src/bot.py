@@ -22,6 +22,7 @@ import analyzer as ana
 API_Key = os.environ['API_Key']
 LINK = os.environ["REQUEST_LINK"]
 OWNER_USERNAME = os.environ["OWNER_USERNAME"]
+REQUEST_INTERVAL = int(os.environ["REQUEST_INTERVAL_SECONDS"])
 
 updater = Updater(API_Key, use_context=True)
 dispatcher = updater.dispatcher
@@ -75,8 +76,8 @@ def make_request():
             time.sleep(till_tomorrow)
 
         else:
-            logging.info("No new data - sleeping for one hour")
-            time.sleep(3600) #requesting every hour
+            logging.info(f"No new data - sleeping for {round(REQUEST_INTERVAL / 60)} minutes")
+            time.sleep(REQUEST_INTERVAL) #requesting every hour
 
 
 reqest_thrd = threading.Thread(target=make_request)
@@ -122,12 +123,15 @@ show_handler = CommandHandler(['Adenau', 'Ahrweiler', 'Breisig', 'Brohltal',\
 dispatcher.add_handler(show_handler)
 
 
-hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a'], btc.help)
+hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a', 'mehr', 'more'], btc.help)
 dispatcher.add_handler(hilfe_handler)
 
 
 about_handler = CommandHandler('about', btc.about)
 dispatcher.add_handler(about_handler)
+
+methods_handler = CommandHandler(["methods", "methoden", "berechnung"], btc.methods)
+dispatcher.add_handler(methods_handler)
 
 notify_handler = CommandHandler("notify", mdc.notify_all)
 dispatcher.add_handler(notify_handler)

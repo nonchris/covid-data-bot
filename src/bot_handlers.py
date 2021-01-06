@@ -17,13 +17,13 @@ abo_text = "\
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
 
 menu_kb = ReplyKeyboardMarkup([
-                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about'] \
+                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about', '/methods'] \
                     ], one_time_keyboard=False)
 
 #this secondary keyboard is needed to make the keyboard
 #pop up dagain when user disabled the custom keyboard and /help won't appear
 menu2_kb = ReplyKeyboardMarkup([
-                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe'] \
+                    ['/abonnieren'], ['/zeig_graph'], ['/mehr'] \
                     ], one_time_keyboard=False)
 
 show_kb = ReplyKeyboardMarkup([
@@ -63,7 +63,7 @@ Wählen Sie die Regionen aus, zu denen Sie automatische Updates erhalten wollen:
 /abonnieren\n\
 Lassen Sie sich einzelne Graphen anzeigen:\n\
 /zeig_graph\n\
-Zeigt Ihnen eine List von Befehlen an:\n\
+Zeigt Ihnen eine Liste von Befehlen an:\n\
 /hilfe\n\
 ')
     writer.add(update.message.chat)
@@ -133,6 +133,19 @@ Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
 Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
 Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
 
+def methods(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=menu_kb,
+                             text="Aktuelle Fallzahlen:\n\n\
+Die aktuellen Zahlen werden von der Website des Kreis Ahrweiler bezogen.\n\
+Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten verfügbaren Wert gerechnet.\
+In der Regel entspricht dies dem Wert des Vortags. Eine Lücke in den Daten wird visuell dargestellt.\n\
+\n\n\
+Inzidenz:\n\n\
+Es wird die ganz normale Formel zur Berchnung, der Inzidenz verwendet.\n\
+Infizierte x 100000 / Einwohner\n\
+Mehr Informationen zur Berechnung, Rechenfehlern und Abweichungen finden Sie hier:\n\
+https://github.com/nonchris/covid-data-bot/pull/12\n\n\
+Mehr über den Bot: /about")
 
 def about(update, context):
     context.bot.send_message(text='Dieser Bot ist ein Open Source Projekt.\n\
