@@ -15,6 +15,7 @@ import toggle_subs as tgs
 import message_handlers as msh
 import mod_commands as mdc
 import csv_utils
+import src.utils as utils
 
 import requester as req
 import analyzer as ana
@@ -38,12 +39,11 @@ logging.basicConfig(
 
 
 def send_update(date):
-    cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal", \
-         "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
+
 
     analyzer = ana.Analyzer(date)
 
-    for city in cities:
+    for city in utils.city_list:
         path = analyzer.visualize(city)
 
         for chat in writer.entries:

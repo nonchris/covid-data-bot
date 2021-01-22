@@ -1,8 +1,10 @@
-import csv_utils
 import datetime
 
 from telegram import KeyboardButton
 from telegram import ReplyKeyboardMarkup
+
+import src.utils as utils
+
 
 def setup(wrtr):
     """passing csv access object to this"""
@@ -107,7 +109,7 @@ def show(update, context):
     city = ""
     #getting word that actually triggerd that command
     #using the mapping dict from csv_utils
-    city = csv_utils.translator[update['message']['text'][1:].lower()]
+    city = utils.translator[update['message']['text'][1:].lower()]
     
     #actual part for getting and sending the graph
     today = datetime.date.today()
