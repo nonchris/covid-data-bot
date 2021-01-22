@@ -12,18 +12,17 @@ class CustomParser(HTMLParser):
 
     def collect(self, html_text: str) -> list:
         """
-        Function that starts the processing
-        -> initializes additional required class variables
-        -> feeds text input to parser function
+        :param html_text: raw requested HTML
 
-        is_capture: needed to toggle whether the incoming line is interesting
-        found_lines: will contain all found text at the end
+        Function that starts the processing\n
+        - initializes additional required class variables
+        - feeds text input to parser function
 
-        Returns: found_text (str)
+        :return: list - all relevant lines
         """
 
-        self.is_capture = False
-        self.found_lines = []
+        self.is_capture = False  # needed to toggle whether the incoming line is interesting
+        self.found_lines = []    # will contain all found text at the end
 
         self.feed(html_text)
 
