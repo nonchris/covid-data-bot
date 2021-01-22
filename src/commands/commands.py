@@ -1,9 +1,8 @@
 import datetime
 
-from telegram import KeyboardButton
 from telegram import ReplyKeyboardMarkup
 
-import src.utils as utils
+import src.data_handling.utils as utils
 
 
 def setup(wrtr):
@@ -92,7 +91,7 @@ Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat
 
 def menu_menu(update, context):
     context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
-            /abo   /zeig   /hilfe',
+            /abo   /zeig   /mehr',
                 reply_markup=menu2_kb, chat_id=update.effective_chat.id)
 
 def menu_show(update, context):

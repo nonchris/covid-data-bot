@@ -1,4 +1,4 @@
-from bot_handlers import menu2_kb
+from src.commands.commands import menu2_kb
 
 def setup(wrtr):
     """passing csv access object to this file"""
