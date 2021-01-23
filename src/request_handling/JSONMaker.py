@@ -5,7 +5,7 @@ import traceback
 from datetime import date
 from typing import List, Any, Dict, Union, Optional
 
-import src.data_handling.utils as utils
+import data_handling.utils as utils
 
 
 class JSONMaker:

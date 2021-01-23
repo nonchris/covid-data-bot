@@ -2,7 +2,7 @@ import datetime
 
 from telegram import ReplyKeyboardMarkup
 
-import src.data_handling.utils as utils
+import data_handling.utils as utils
 
 
 def setup(wrtr):

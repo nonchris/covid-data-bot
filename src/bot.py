@@ -10,16 +10,16 @@ from telegram.ext import MessageHandler, Filters
 from telegram import Bot
 from telegram import error
 
-import src.commands.commands as cmd
-import src.commands.mod_commands as mdc
-import src.commands.message_handlers as msh
-import src.commands.subscription_commands as sbc
+import commands.commands as cmd
+import commands.mod_commands as mdc
+import commands.message_handlers as msh
+import commands.subscription_commands as sbc
 
-import src.data_handling.csv_database as csv_database
-import src.data_handling.analyzer as ana
-import src.data_handling.utils as utils
+import data_handling.csv_database as csv_database
+import data_handling.analyzer as ana
+import data_handling.utils as utils
 
-import src.request_handling.requester_v2 as req2
+import request_handling.requester_v2 as req2
 
 
 API_Key = os.environ['API_Key']

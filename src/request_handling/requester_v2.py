@@ -6,8 +6,8 @@ from datetime import date
 
 import requests
 
-from src.request_handling.CustomHTMLParser import CustomParser
-from src.request_handling.JSONMaker import JSONMaker
+from request_handling.CustomHTMLParser import CustomParser
+from request_handling.JSONMaker import JSONMaker
 
 
 class RequesterV2:
