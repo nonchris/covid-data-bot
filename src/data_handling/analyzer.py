@@ -230,29 +230,32 @@ class Analyzer:
                 linewidth=0.4, linestyle="-")
         ax.set_axisbelow(True)
 
-        #getting incidence
+        # getting incidence
         incidence = self.incidence(city)
 
         # extending plot for disclaimer
         plt.title(f"Neuinfektionen {city} - Stand {self.date}\n")
 
-        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#999999"))
+        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#8c8c8c"))
 
         plt.gcf().subplots_adjust(bottom=0.28)
-        #plt.gcf().autofmt_xdate()
+        # plt.gcf().autofmt_xdate()
 
-        plt.figtext(0.5, 0.02, \
-'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich \
-auf der Homepage veröffentlichten Fallzahlen. \n \
-Tage ohne Aktualisierung der Daten werden ausgelassen. \
-Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n\
-Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen. \
-Dieser Bot ist ein privates Projekt und steht in keiner Verbindung zu einer Behörde.',
-            color=("#a8a8a8"), fontsize="xx-small", ha="center") #backgroundcolor=("#dbdbdb")
+        # 'water mark' on the right side
+        plt.figtext(0.95, 0.43, "t.me/aw_covidbot", rotation="vertical",
+                    fontsize="medium", color=("#adadad"), ha="center")
 
-        plt.figtext(0.95, 0.43, "t.me/aw_covidbot", rotation="vertical", \
-                    fontsize="medium", color=("#c9c9c9"), ha="center")
-        plt.savefig(path, dpi=300)
+        plt.figtext(0.975, 0.457, "open telegram bot", rotation="vertical",
+                    fontsize="x-small", color=("#cccccc"), ha="center")
+
+        # bottom disclaimer
+        plt.figtext(0.5, 0.02,
+                    'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich'
+                    'auf der Homepage veröffentlichten Fallzahlen. \n'
+                    'Tage ohne Aktualisierung sind durch fehlende Beschriftung dargestellt.'
+                    'Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n'
+                    'Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen.'
+                    'Dieser Bot ist ein Open-Source Projekt und steht in keiner Verbindung zu einer Behörde.',
                     color=("#a8a8a8"), fontsize="xx-small", ha="center")  # backgroundcolor=("#dbdbdb")
 
         # saving plot to disk
