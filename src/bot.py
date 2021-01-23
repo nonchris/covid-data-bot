@@ -17,13 +17,14 @@ import src.commands.subscription_commands as sbc
 
 import src.data_handling.csv_database as csv_database
 import src.data_handling.analyzer as ana
-
 import src.data_handling.utils as utils
 
-import requester as req
+import src.request_handling.requester_v2 as req2
+
 
 API_Key = os.environ['API_Key']
 LINK = os.environ["REQUEST_LINK"]
+START_NUM = int(os.environ["START_NUM"])
 OWNER_USERNAME = os.environ["OWNER_USERNAME"]
 REQUEST_INTERVAL = int(os.environ["REQUEST_INTERVAL_SECONDS"])
 
@@ -62,11 +63,14 @@ def send_update(date):
 
 
 def make_request():
+    rq = req2.RequesterV2('https://www.kreis-ahrweiler.de/presse.php?lfdnrp=', START_NUM)
     while True:
-        rq = req.Requester(LINK)
-        if rq.success:
+        #rq = req.Requester(LINK)
+        # first doing request and then making JSON - both return bool
+        if rq.do_request() and rq.make_json():
+            print("entered")
             logging.info('Got the requested data - starting dispatch')
-            send_update(rq.date)
+            send_update(rq.pub_date)
             logging.info("Sent all messages, sleeping until tomorrow")
 
             d = datetime.datetime.now()
