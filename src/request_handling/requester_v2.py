@@ -4,12 +4,10 @@ import time
 import traceback
 from datetime import date
 
-from dateutil import parser as dateparser
-
 import requests
 
-from CustomHTMLParser import CustomParser
-from src.JSONMaker import JSONMaker
+from src.request_handling.CustomHTMLParser import CustomParser
+from src.request_handling.JSONMaker import JSONMaker
 
 
 class RequesterV2:
@@ -33,29 +31,46 @@ class RequesterV2:
 
         # 'static variables'
         self.parser = CustomParser()  # initializing HTML parser
-        self.link = link  # holds link base
+        self.maker = JSONMaker()      # initializing JSONMaker
+        self.link = link              # holds link base
 
         # 'dynamic variables'
-        self.status = False
+        self.status_new_data = False  # status if new data from today was found
+        self.status_json = False      # status if JSON was made successful
         self.latest_nr = start_nr  # number of last requested press release
         self.pub_date = None       # holds date of publication
         self.latest_link = ""      # holds final link to
         self.lines = []            # holds found and filtered lines
 
-    def do_request(self):
+    def do_request(self, speed=1.0, date_back=0):
         """
+        :param date_back: parameter to request data from an earlier date
+        :param request speed: time between two requests in seconds
+
         Resets results variables and starts scan for new press releases
         :return: bool - status if new release was found
         """
         # resetting variables
         self.lines = []
-        self.status = False
+        self.status_new_data = False
+        self.status_json = False
         self.pub_date = None
         self.latest_link = ""
 
         # starting request
-        self.status = self.find_latest(self.latest_nr)
-        return self.status
+        self.status_new_data = self.find_latest(self.latest_nr, speed=speed, date_back=date_back)
+
+        return self.status_new_data
+
+    def make_json(self) -> bool:
+        """
+        Wrapper that handles a JSONMaker Class, made so there's less external control flow needed.\n
+        It's especially useful because JSONMaker needs class variables as input
+
+        :return: bool - status if processing was successful
+        """
+        self.status_json = self.maker.make_json(self.pub_date, self.lines)
+        return self.status_json
 
     @staticmethod
     def extract_date(lines: list) -> date:
@@ -70,12 +85,13 @@ class RequesterV2:
         - extracting last line from lines
         - casting line to string and splitting it
         - retrieving last object from that new list
-        - converting date to date-object using parser from dateutil
+        - converting date to date-object using string slicing
 
         :return: parsed date
         """
         this_date: str = str(lines[-1]).split()[-1]
-        this_date: date = dateparser.parse(this_date).date()
+        # slicing date of the type dd.mm.yyyy
+        this_date: date = datetime.date(int(this_date[6:]), int(this_date[3:5]), int(this_date[0:2]))
 
         return this_date
 
@@ -90,6 +106,7 @@ class RequesterV2:
 
         :return: True if date matches comparison
         """
+        print(datetime.date.today() - datetime.timedelta(look_back))
         if datetime.date.today() - datetime.timedelta(look_back) == to_test:
             return True
         return False
@@ -111,9 +128,11 @@ class RequesterV2:
             logging.error("Failed to WRITE")
             logging.error(f"\n{traceback.format_exc()}------")
 
-    def find_latest(self, nr) -> bool:
+    def find_latest(self, nr, speed=1.0, date_back=0) -> bool:
         """
         :param nr: number to complete request link
+        :param request speed: time between two requests in seconds
+        :param date_back: parameter to request data from an earlier date
 
         Requests website:
         - builds link, links are counted upwards like release=0001 / 0002 etc
@@ -163,7 +182,7 @@ class RequesterV2:
             self.pub_date = self.extract_date(found_lines)
 
         # we're done - found correct press-release!
-        if self.is_today(self.pub_date):  # and date != -1:
+        if self.is_today(self.pub_date, date_back):  # and date != -1:
             print("FOUND matching date!")
             print(self.pub_date, link)
             self.write_raw(content.text)  # writing html code
@@ -174,12 +193,21 @@ class RequesterV2:
 
         else:
             print("Tried: ", link)
-            time.sleep(1)  # we don't wanna spam them to much - do we? :)
-            self.find_latest(nr + 1)  # recursive call
+            time.sleep(speed)  # we don't wanna spam them to much - do we? :)
+            return self.find_latest(nr + 1, speed=speed, date_back=date_back)  # recursive call
 
 
 if __name__ == "__main__":
-    req = RequesterV2("https://www.kreis-ahrweiler.de/presse.php?lfdnrp=", 9687)
-    req.do_request()
-    maker = JSONMaker()
-    maker.make_json(req.pub_date, req.lines)
+
+    startpoint = 9670
+    start_back = 0
+    date_back = 7
+    req = RequesterV2("https://www.kreis-ahrweiler.de/presse.php?lfdnrp=", startpoint)
+    for i in range(start_back, date_back):
+        print(i)
+        if req.do_request(date_back=i, speed=0.3):
+            startpoint -= 3
+            req.latest_nr = startpoint
+            req.make_json()
+
+            print(f"Made day {req.pub_date}")
