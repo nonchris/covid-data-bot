@@ -1,8 +1,9 @@
-import csv_utils
 import datetime
 
-from telegram import KeyboardButton
 from telegram import ReplyKeyboardMarkup
+
+import data_handling.utils as utils
+
 
 def setup(wrtr):
     """passing csv access object to this"""
@@ -90,7 +91,7 @@ Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat
 
 def menu_menu(update, context):
     context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
-            /abo   /zeig   /hilfe',
+            /abo   /zeig   /mehr',
                 reply_markup=menu2_kb, chat_id=update.effective_chat.id)
 
 def menu_show(update, context):
@@ -107,7 +108,7 @@ def show(update, context):
     city = ""
     #getting word that actually triggerd that command
     #using the mapping dict from csv_utils
-    city = csv_utils.translator[update['message']['text'][1:].lower()]
+    city = utils.translator[update['message']['text'][1:].lower()]
     
     #actual part for getting and sending the graph
     today = datetime.date.today()

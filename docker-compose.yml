@@ -15,6 +15,7 @@ services:
       - UID=1000 
       - GID=1000
       - API_Key=
+      - START_NUM=
       - REQUEST_LINK=
       - OWNER_USERNAME=
       - REQUEST_INTERVAL_SECONDS=600

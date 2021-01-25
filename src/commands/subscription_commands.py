@@ -1,5 +1,3 @@
-import csv_utils
-
 def setup(wrtr):
     """passing csv access object to this"""
     global writer

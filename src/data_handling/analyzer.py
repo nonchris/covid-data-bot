@@ -9,12 +9,22 @@ import matplotlib.pyplot as plt
 
 
 class Analyzer:
-    def __init__(self, date: datetime.date):
-        self.cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal", \
+    def __init__(self, pub_date: datetime.date):
+        """
+        :param pub_date: latest date data was published
+
+        Class responsible for analyzing and plotting the data read from generated JSONs
+        - reads JSONs
+        - loads data to dataframes
+        - calculates vales e.g. diff from new infections
+        - plots data using matplotlib
+        - saved figure as image
+        """
+        self.cities = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal",
                        "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
 
-        #Source: https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025
-        #Numbers are from 31.12.2019
+        # Source: https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025
+        # Numbers are from 31.12.2019
         self.population = {
             "Adenau": 13022,
             "Altenahr": 10910,
@@ -27,12 +37,12 @@ class Analyzer:
 
         }
 
-        self.date = date
+        self.date = pub_date  # date latest date of data
 
-        self.days = 20
+        self.days = 20  # days to look back
 
-        self.dataframes = {}
-        self.diffframes = {}
+        self.dataframes = {}  # holds data frames for each city
+        self.diffframes = {}  # holds difference dataframes for each city
 
         for city in self.cities:
             self.city = city
@@ -45,7 +55,12 @@ class Analyzer:
             # self.visualize()
 
     def read_data(self):
+        """
+        Reads multiple JSON-Files in data-frame
+        Saves data-frame in self.df
+        """
 
+        # staring at latest date we want to cover - counting dates up
         start_date = self.date - datetime.timedelta(self.days - 1)
         for t in range(self.days):
             date = start_date + datetime.timedelta(t)
@@ -53,18 +68,14 @@ class Analyzer:
                 with open(f"data/ahrweiler-{date}.json") as f:
                     # loading data, getting fist 'main' key (date)
                     data = json.load(f)
-                    # print(data)
-                    key = list(data.keys())[0]
 
-                    # getting 'sub keys' (locations)
-                    sub_keys = data[key][0]
-                    sub_keys = list(sub_keys.keys())
+                    key = list(data.keys())[0]  # getting main key to access JSON
 
-                    # 'croppig' json to only one city
+                    # 'cropping' json to only one city
                     city_dict = data[key][0][self.city][0]
 
                     dt = pd.json_normalize(city_dict)
-                    # print(dt)
+
                     # building dataframe
                     if self.df.size > 0:
                         self.df = self.df.append(dt)
@@ -85,24 +96,39 @@ class Analyzer:
                         {traceback.print_exc(limit=None, file=None, chain=True)}")
 
     def calc_data(self):
-        # convertig date-sting
+        """
+        Prepares data by:
+        - setting date and location as indices
+        - converting data to integers
+        - calculating diff to previous day
+        Saves data-frames in class-dictionaries using city as key
+        """
+
+        # setting indices
         self.df["date"] = pd.to_datetime(self.df["date"], format="%Y-%m-%d")
         self.df = self.df.set_index(["date", "location"])
+
+        # converting date-sting
         self.df = self.df.astype(int)
         # pd.to_numeric()
-        self.diff = self.df.diff(axis=0)
-        self.dataframes[self.city] = self.df
-        self.diffframes[self.city] = self.diff
-        #print(self.df)
-        #print(self.diff)
-        #print(self.dataframes)
 
+        # calculating difference to previous day
+        diff = self.df.diff(axis=0)
+
+        # saving dataframes to dictionaries using city as keys
+        self.dataframes[self.city] = self.df
+        self.diffframes[self.city] = diff
 
     def is_missing(self, df: pd.DataFrame, date: datetime.date, counter: int) -> int:
         """
+        :param df: dataframe to check
+        :param date: date to check if exists
+        :param counter: counts how many days are missing (recursive)
+
         Checks for missing data from a certain date on backwards
         Built recursive - will call itself until day with data is reached
-        -> returns number of missing dates
+
+        :returns: number of missing dates
         """
 
         try:
@@ -125,19 +151,20 @@ class Analyzer:
             # passing counter up
             return counter
 
-
-    def incidence(self, city: str) -> int: # returns incidence value
+    def incidence(self, city: str) -> int:  # returns incidence value
         """
+        :param city: name of df-index to address
+
         Makes a copy of city array and cuts last seven days cut
-        Checks if eight day got data, if not the case:
-            Dividing seventh days value by number of days missing, to approximate
-            how many cases have "really" occurred at that day
+        Checks if eight day got data, if not the case:\n
+            - Dividing seventh days value by number of days missing, to approximate
+            - how many cases have "really" occurred at that day
         Then all days will be summed up and the incidence will be calculated
-        Does not cover the edge case when days last days and 8+ were empty
-        -> dividing 'oldest' number in seven days array by number of days 8+
+        Does not cover the edge case when days last days and 8+ were empty\n
+        -> dividing 'oldest' number in seven days array by number of days 8+\n
         -> divider will be to small by days missing at the end of the seven days array
 
-        Return: Incidence rounded to two decimal places
+        :return: Incidence rounded to two decimal places
         """
 
         days = self.diffframes[city].copy()
@@ -155,7 +182,7 @@ class Analyzer:
         last_index = seven_days.index.get_level_values("date")[0]
 
         # approximating last days infections
-        days.loc[last_index]["infected"] = days.loc[last_index]["infected"] / 2 # divider
+        days.loc[last_index]["infected"] = days.loc[last_index]["infected"] / 2  # divider
 
         # sum of all seven days
         summed = seven_days["infected"].sum()
@@ -166,11 +193,15 @@ class Analyzer:
         # return rounded value
         return round(incidence, 2)
 
-
     def visualize(self, city: str) -> str:  # returns path to image
+        """
+        :param city: key to dict with dataframes
 
-        #print('Number of colums in Dataframe : ', len(df.columns))
-        #print('Number of rows in Dataframe : ', len(df.index))
+        - Generates bar-plot of infections from diff-dataframe
+        - Saves them as png
+
+        :return: name of file
+        """
 
         path = f"visuals/{city}-{self.date}.png"
 
@@ -189,7 +220,7 @@ class Analyzer:
         # appearance
 
         # setting x-labels
-        plt.xticks(ticks=x_data_infected, rotation=70)
+        plt.xticks(ticks=x_data_infected, rotation=80)
 
         # setting y-axis scale
         plt.yticks(np.arange(0, y_data_infected.max() + 1, step=2))
@@ -199,29 +230,39 @@ class Analyzer:
                 linewidth=0.4, linestyle="-")
         ax.set_axisbelow(True)
 
-        #getting incidence
+        # getting incidence
         incidence = self.incidence(city)
 
         # extending plot for disclaimer
         plt.title(f"Neuinfektionen {city} - Stand {self.date}\n")
 
-        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#999999"))
+        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#8c8c8c"))
 
         plt.gcf().subplots_adjust(bottom=0.28)
-        #plt.gcf().autofmt_xdate()
+        # plt.gcf().autofmt_xdate()
 
-        plt.figtext(0.5, 0.02, \
-'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich \
-auf der Homepage veröffentlichten Fallzahlen. \n \
-Tage ohne Aktualisierung der Daten werden ausgelassen. \
-Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n\
-Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen. \
-Dieser Bot ist ein privates Projekt und steht in keiner Verbindung zu einer Behörde.',
-            color=("#a8a8a8"), fontsize="xx-small", ha="center") #backgroundcolor=("#dbdbdb")
+        # 'water mark' on the right side
+        plt.figtext(0.95, 0.43, "t.me/aw_covidbot", rotation="vertical",
+                    fontsize="medium", color=("#adadad"), ha="center")
 
-        plt.figtext(0.95, 0.43, "t.me/aw_covidbot", rotation="vertical", \
-                    fontsize="medium", color=("#c9c9c9"), ha="center")
-        plt.savefig(path, dpi=300)
+        plt.figtext(0.975, 0.457, "open telegram bot", rotation="vertical",
+                    fontsize="x-small", color=("#cccccc"), ha="center")
+
+        # bottom disclaimer
+        plt.figtext(0.5, 0.02,
+                    'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich'
+                    'auf der Homepage veröffentlichten Fallzahlen. \n'
+                    'Tage ohne Aktualisierung sind durch fehlende Beschriftung dargestellt.'
+                    'Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n'
+                    'Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen.'
+                    'Dieser Bot ist ein Open-Source Projekt und steht in keiner Verbindung zu einer Behörde.',
+                    color=("#a8a8a8"), fontsize="xx-small", ha="center")  # backgroundcolor=("#dbdbdb")
+
+        # saving plot to disk
+        try:
+            plt.savefig(path, dpi=300)
+        except Exception as e:
+            logging.error(f"FAILED SAVING PLOT {path}\n{traceback.format_exc()}")
 
         return path
 
