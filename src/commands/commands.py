@@ -28,9 +28,9 @@ menu2_kb = ReplyKeyboardMarkup([
                     ], one_time_keyboard=False)
 
 show_kb = ReplyKeyboardMarkup([
-                    ['/Adenau', '/Bad_Breisig', '/Brohltal'], \
-                    [ '/Grafschaft', '/Remagen', '/Sinzig'],\
-                    ['/Bad_Neuenahr_Ahrweiler'] \
+                    ['/Adenau', '/Altenahr', '/Bad_Breisig'], \
+                    ['/Brohltal', '/Grafschaft', '/Remagen'],\
+                    ['/Sinzig', '/Bad_Neuenahr_Ahrweiler'] \
                     ], one_time_keyboard=True)
 
 abo_kb = ReplyKeyboardMarkup([
@@ -121,7 +121,7 @@ def show(update, context):
             print(path)
             with open(path, "rb") as img:
                 context.bot.send_message(text='\
-            /abo   /zeig   /hilfe',\
+            /abo   /zeig   /menu',\
                                         chat_id=update.effective_chat.id)
                 context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
             break #if this point is reached, a valid file is found
