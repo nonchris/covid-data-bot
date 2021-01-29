@@ -1,8 +1,7 @@
 import datetime
 
-from telegram import ReplyKeyboardMarkup
-
 import data_handling.utils as utils
+import commands.keyboards as kb
 
 
 def setup(wrtr):
@@ -17,28 +16,8 @@ abo_text = "\
     #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
     #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
 
-menu_kb = ReplyKeyboardMarkup([
-                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about', '/methods'] \
-                    ], one_time_keyboard=False)
-
 #this secondary keyboard is needed to make the keyboard
 #pop up dagain when user disabled the custom keyboard and /help won't appear
-menu2_kb = ReplyKeyboardMarkup([
-                    ['/abonnieren'], ['/zeig_graph'], ['/mehr'] \
-                    ], one_time_keyboard=False)
-
-show_kb = ReplyKeyboardMarkup([
-                    ['/Adenau', '/Altenahr', '/Bad_Breisig'], \
-                    ['/Brohltal', '/Grafschaft', '/Remagen'],\
-                    ['/Sinzig', '/Bad_Neuenahr_Ahrweiler'] \
-                    ], one_time_keyboard=True)
-
-abo_kb = ReplyKeyboardMarkup([
-    ['/abo_adenau', '/abo_altenahr', '/abo_brohltal'],
-    ['/abo_grafschaft', '/abo_remagen', '/abo_sinzig'],
-    ['/abo_alle', '/abo_bad_breisig'],
-    ['/abo_bad_neuenahr_ahrweiler',]
-    ], one_time_keyboard=True)
 
 def start(update, context):
     """Command triggered at /start"""
@@ -56,7 +35,7 @@ dieser Bot kann Ihnen täglich ein Update senden, so bald es neue Zahlen gibt.\n
 Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates Projekt handelt.\n\
 \n\
 Mit freundlichen Grüßen und bleiben Sie gesund!\n\
-Covid Update Bot", reply_markup=menu_kb, chat_id=update.effective_chat.id)
+Covid Update Bot", reply_markup=kb.menu_kb, chat_id=update.effective_chat.id)
 
     context.bot.send_message(chat_id=update.effective_chat.id,
 text=f'Bitte wählen Sie aus den angegebenen Optionen aus, was Sie tun möchten.\n\
@@ -86,22 +65,22 @@ Sie können zwischen Bot-Tatstur und normaler Tatstur mit einer Schaltfläche \
 in der Text-Zeile hin und her wechseln.\n\
 Hervorgehoben Befehle sind zudem klickbar.\n\n\
 Bleiben Sie gesund!\n\
-Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat.id)
+Corona Bot Kreis Ahrweiler', reply_markup=kb.menu_kb, chat_id=update.effective_chat.id)
 
 
 def menu_menu(update, context):
     context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
             /abo   /zeig   /mehr',
-                reply_markup=menu2_kb, chat_id=update.effective_chat.id)
+                             reply_markup=kb.inline_menu, chat_id=update.effective_chat.id)
 
 def menu_show(update, context):
     context.bot.send_message(text='Bitte wählen Sie eine Region.',
-                reply_markup=show_kb, chat_id=update.effective_chat.id)
+                             reply_markup=kb.show_kb, chat_id=update.effective_chat.id)
 
 
 def menu_abo(update, context):
     context.bot.send_message(text='Bitte wählen Sie eine Region.',
-                reply_markup=abo_kb, chat_id=update.effective_chat.id)
+                             reply_markup=kb.abo_kb, chat_id=update.effective_chat.id)
 
 
 def show(update, context):
@@ -135,7 +114,7 @@ Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
 Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
 
 def methods(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=menu_kb,
+    context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=kb.menu_kb,
                              text="Aktuelle Fallzahlen:\n\n\
 Die aktuellen Zahlen werden von der Website des Kreis Ahrweiler bezogen.\n\
 Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten verfügbaren Wert gerechnet.\
@@ -155,7 +134,7 @@ Dieses Projekt steht weder mit dem Kreis Ahrweiler, \
 noch einer anderen Behörde in Verbindung.\n\
 Für Richtigkeit und Vollständigkeit der Daten wird keine Haftung übernommen.\n\
 https://github.com/nonchris/covid-data-bot', \
-        chat_id=update.effective_chat.id, reply_markup=menu_kb)
+                             chat_id=update.effective_chat.id, reply_markup=kb.menu_kb)
 
 def caps(update, context):
     """
