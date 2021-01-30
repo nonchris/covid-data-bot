@@ -73,13 +73,14 @@ def gen_city_menu(prefix: str) -> Tuple[List[List[InlineKeyboardButton]], List[L
     """
 
     # converting city list to list of buttons - doing some adjustments to callback parameters
-    buttons = [InlineKeyboardButton(city, callback_data=prefix + city.replace(' ', '_').lower()) for city in utils.city_list]
+    buttons = [InlineKeyboardButton(city, callback_data=prefix + city.replace(' ', '_').lower()) for city in
+               utils.city_list]
 
     # inserting hard back-button
     buttons.insert(0, back_button_clear)
 
     arranged_buttons = []  # for the final nested list
-    row = []               # holds each row
+    row = []  # holds each row
     for i in range(len(buttons)):
         # building list of three objects
         if i % 3 != 0 or i == 0:
@@ -88,8 +89,8 @@ def gen_city_menu(prefix: str) -> Tuple[List[List[InlineKeyboardButton]], List[L
         # if line contains three buttons
         else:
             arranged_buttons.append(copy.deepcopy(row))  # appending row
-            row.clear()                                  # clearing
-            row.append(buttons[i])                       # appending next button
+            row.clear()  # clearing
+            row.append(buttons[i])  # appending next button
 
     # appending last row that wasn't caught because it isn't filled up
     arranged_buttons.append(row)
@@ -100,13 +101,14 @@ def gen_city_menu(prefix: str) -> Tuple[List[List[InlineKeyboardButton]], List[L
 
     return arranged_buttons, soft_version
 
+
 # main menu
 inline_menu = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callback_data='menu_sub'),
                                      InlineKeyboardButton('Graphen', callback_data='menu_show'),
                                      InlineKeyboardButton('Mehr', callback_data='more')]])
 
 # more menu
-inline_more = InlineKeyboardMarkup([[back_button, InlineKeyboardButton('Hilfe', callback_data='help'),
+inline_more = InlineKeyboardMarkup([[back_button_soft, InlineKeyboardButton('Hilfe', callback_data='help'),
                                      InlineKeyboardButton('Über den Bot', callback_data='about'),
                                      InlineKeyboardButton('Methodik', callback_data='methods')]])
 
@@ -115,5 +117,5 @@ _inline_show, _inline_show_soft = gen_city_menu('clearshow')
 inline_show, inline_show_soft = InlineKeyboardMarkup(_inline_show), InlineKeyboardMarkup(_inline_show_soft)
 
 # menu for subscribing
-_inline_sub, _inline_sub_soft = gen_city_menu('clearsub')
+_inline_sub, _inline_sub_soft = gen_city_menu('sub')
 inline_sub, inline_sub_soft = InlineKeyboardMarkup(_inline_sub), InlineKeyboardMarkup(_inline_sub_soft)
