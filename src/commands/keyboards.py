@@ -10,7 +10,7 @@ File containing old keyboard markups and new inline-keyboards
 
 # Standard Keyboards
 menu_kb = ReplyKeyboardMarkup([
-    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about', '/methods']
+    ['/abonnieren'], ['/zeig_graph'], ['/hilfe']
 ], one_time_keyboard=False)
 
 menu2_kb = ReplyKeyboardMarkup([
@@ -106,6 +106,11 @@ def gen_city_menu(prefix: str) -> Tuple[List[List[InlineKeyboardButton]], List[L
 inline_menu = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callback_data='menu_sub'),
                                      InlineKeyboardButton('Graphen', callback_data='menu_show'),
                                      InlineKeyboardButton('Mehr', callback_data='more')]])
+
+# start menu - same as above just with other labeled 'more button'
+inline_start = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callback_data='menu_sub'),
+                                     InlineKeyboardButton('Graphen', callback_data='menu_show'),
+                                     InlineKeyboardButton('Hilfe', callback_data='more')]])
 
 # more menu
 inline_more = InlineKeyboardMarkup([[back_button_soft, InlineKeyboardButton('Hilfe', callback_data='help'),

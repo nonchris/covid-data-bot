@@ -116,14 +116,8 @@ show_handler = CommandHandler(['Adenau', 'Altenahr', 'Ahrweiler', 'Breisig', 'Br
                                ], cmd.show)
 dispatcher.add_handler(show_handler)
 
-hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a', 'mehr', 'more'], cmd.help)
+hilfe_handler = CommandHandler(['hilfe', 'hilf', 'help', 'h', 'abo', 'a', 'mehr', 'more'], cmd.bot_help)
 dispatcher.add_handler(hilfe_handler)
-
-about_handler = CommandHandler('about', cmd.about)
-dispatcher.add_handler(about_handler)
-
-methods_handler = CommandHandler(["methods", "methoden", "berechnung"], cmd.methods)
-dispatcher.add_handler(methods_handler)
 
 notify_handler = CommandHandler("notify", mdc.notify_all)
 dispatcher.add_handler(notify_handler)
