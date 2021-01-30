@@ -83,13 +83,15 @@ def menu_abo(update, context):
                              reply_markup=kb.inline_sub, chat_id=update.effective_chat.id)
 
 
+def show(update, context, city='', query=None):
 
-def show(update, context):
-    city = ""
+    # if query:
+    #     query.delete_message()
     #getting word that actually triggerd that command
     #using the mapping dict from csv_utils
-    city = utils.translator[update['message']['text'][1:].lower()]
-    
+    if city == '':
+        city = utils.translator[update['message']['text'][1:].lower()]
+
     #actual part for getting and sending the graph
     today = datetime.date.today()
     #used to go trough the last five possible filenames
