@@ -12,7 +12,6 @@ from telegram import error
 
 import commands.commands as cmd
 import commands.mod_commands as mdc
-import commands.message_handlers as msh
 import commands.handle_callback as hcb
 
 import data_handling.csv_database as csv_database
@@ -91,13 +90,12 @@ reqest_thrd.start()
 writer = csv_database.Writer()
 # passing writer object into other files
 cmd.setup(writer)
-msh.setup(writer)
 mdc.setup(writer)
 
 start_handler = CommandHandler('start', cmd.start)
 dispatcher.add_handler(start_handler)
 
-echo_handler = MessageHandler(Filters.text & (~Filters.command), msh.echo)
+echo_handler = MessageHandler(Filters.text & (~Filters.command), cmd.menu_menu)
 dispatcher.add_handler(echo_handler)
 
 caps_handler = CommandHandler('caps', cmd.caps)
