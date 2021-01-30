@@ -113,9 +113,12 @@ inline_start = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callbac
                                      InlineKeyboardButton('Hilfe', callback_data='more')]])
 
 # more menu
-inline_more = InlineKeyboardMarkup([[back_button_soft, InlineKeyboardButton('Hilfe', callback_data='help'),
-                                     InlineKeyboardButton('Über den Bot', callback_data='about'),
-                                     InlineKeyboardButton('Methodik', callback_data='methods')]])
+inline_more = InlineKeyboardMarkup([[back_button_soft,
+                                     InlineKeyboardButton('Hilfe', callback_data='help'),
+                                     InlineKeyboardButton('Berechnung', callback_data='methods'),
+                                     InlineKeyboardButton('Kontakt', callback_data='contact')],
+                                    [InlineKeyboardButton('Über den Bot', callback_data='about'),
+                                     InlineKeyboardButton('Teilen', callback_data='share')]])
 
 # menu for showing graphs
 _inline_show, _inline_show_soft = gen_city_menu('clearshow')

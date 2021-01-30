@@ -17,10 +17,12 @@ def methods(query):
     """Displays information about the used calculation methods"""
 
     query.edit_message_text(
-        text="Aktuelle Fallzahlen:\n\n"
-             "Die aktuellen Zahlen werden von der Website des Kreis Ahrweiler bezogen.\n"
-             "Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten verfügbaren Wert gerechnet."
-             "In der Regel entspricht dies dem Wert des Vortags. Eine Lücke in den Daten wird visuell dargestellt.\n"
+        text="Berechnung der Zahlen\n"
+             "Aktuelle Fallzahlen:\n\n"
+             "Die aktuellen Zahlen werden direkt aus den Pressemitteilungen auf der Website des Kreis Ahrweiler bezogen.\n"
+             "Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten veröffentlichten Wert gerechnet."
+             "In der Regel entspricht dies dem Wert des Vortages. Eine Lücke in den Daten wird durch das Auslassen der "
+             "x-Achenbeschriftung dargestellt.\n"
              "\n\n"
              "Inzidenz:\n\n"
              "Es wird die ganz normale Formel zur Berchnung, der Inzidenz verwendet.\n"
@@ -81,3 +83,14 @@ def soft_back(query):
     query.edit_message_text(reply_markup=kb.inline_menu,
                             text='Was möchten Sie als nächstes tun?')
 
+
+def share(query):
+    query.edit_message_text(reply_markup=kb.inline_more,
+                            text='Tägliche Updates zu den Corona Fallzahlen im Kreis Ahrweiler:\n'
+                            't.me/aw_covidbot')
+
+def contact(query):
+    query.edit_message_text(reply_markup=kb.inline_more,
+                            text='Verbesserungsvorschläge und Fehler können Sie direkt auf GitHub äußern:\n'
+                                 'https://github.com/nonchris/covid-data-bot/issues\n'
+                                 'Ansonsten können Sie eine Mail an covidbot@nonchris.eu schreiben.')
