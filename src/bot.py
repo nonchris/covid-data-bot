@@ -13,7 +13,6 @@ from telegram import error
 import commands.commands as cmd
 import commands.mod_commands as mdc
 import commands.message_handlers as msh
-import commands.subscription_commands as sbc
 import commands.handle_callback as hcb
 
 import data_handling.csv_database as csv_database
@@ -93,7 +92,6 @@ writer = csv_database.Writer()
 # passing writer object into other files
 cmd.setup(writer)
 msh.setup(writer)
-sbc.setup(writer)
 mdc.setup(writer)
 
 start_handler = CommandHandler('start', cmd.start)
@@ -132,70 +130,8 @@ dispatcher.add_handler(methods_handler)
 notify_handler = CommandHandler("notify", mdc.notify_all)
 dispatcher.add_handler(notify_handler)
 
+# responsible for all inline commands
 dispatcher.add_handler(CallbackQueryHandler(hcb.handle_callback))
-
-####
-# kreis
-kreis_handler = CommandHandler(['abo_kreis', 'sub_kreis',
-                                'abokreis', 'subkreis', 'akreis', 'skreis'], sbc.tgl_kreis)
-dispatcher.add_handler(kreis_handler)
-
-# adenau
-adenau_handler = CommandHandler(['abo_adenau', 'sub_adenau',
-                                 'aboadenau', 'subadenau', 'aadenau', 'sadenau'], sbc.tgl_adenau)
-dispatcher.add_handler(adenau_handler)
-
-# altenahr
-altenahr_handler = CommandHandler(['abo_altenahr', 'sub_altenahr',
-                                   'aboaltenahr', 'subaltenahr', 'aaltenahr', 'saltenahr'], sbc.tgl_altenahr)
-dispatcher.add_handler(altenahr_handler)
-
-# breisig
-breisig_handler = CommandHandler(['abo_breisig', 'sub_breisig', 'abobreisig', 'subbreisig',
-                                  'abreisig', 'abo_bad_breisig', 'sub_bad_breisig', 'sbreisig'], sbc.tgl_breisig)
-dispatcher.add_handler(breisig_handler)
-
-# brohltal
-brohltal_handler = CommandHandler(['abo_brohltal', 'sub_brohltal',
-                                   'abobrohltal', 'subbrohltal', 'abrohltal', 'sbrohltal'], sbc.tgl_brohltal)
-dispatcher.add_handler(brohltal_handler)
-
-# grafschaft
-grafschaft_handler = CommandHandler(['abo_grafschaft', 'sub_grafschaft',
-                                     'abografschaft', 'subgrafschaft', 'agrafschaft', 'sgrafschaft'],
-                                    sbc.tgl_grafschaft)
-dispatcher.add_handler(grafschaft_handler)
-
-# neuenahr/ahrweiler
-neuenahr_handler = CommandHandler(['abo_neuenahr', 'sub_neuenahr',
-                                   'aboneuenahr', 'subneuenahr', 'aneuenahr', 'abo_bad_neuenahr', 'sneuenahr',
-                                   'abo_ahrweiler', 'sub_ahrweiler',
-                                   'aboahrweiler', 'subahrweiler', 'aahrweiler', 'sahrweiler'], sbc.tgl_neuenahr)
-dispatcher.add_handler(neuenahr_handler)
-
-# remagen
-remagen_handler = CommandHandler(['abo_remagen', 'sub_remagen',
-                                  'aboremagen', 'subremagen', 'aremagen', 'sremagen'], sbc.tgl_remagen)
-dispatcher.add_handler(remagen_handler)
-
-# sinzig
-sinzig_handler = CommandHandler(['abo_sinzig', 'sub_sinzig',
-                                 'abosinzig', 'subsinzig', 'asinzig', 'ssinzig'], sbc.tgl_sinzig)
-dispatcher.add_handler(sinzig_handler)
-
-# kreis
-kreis_handler = CommandHandler(['abo_kreis', 'sub_kreis',
-                                'abokreis', 'subkreis', 'akreis', 'skreis'], sbc.tgl_kreis)
-dispatcher.add_handler(kreis_handler)
-
-# alle
-alle_handler = CommandHandler(['abo_alle', 'sub_alle',
-                               'aboalle', 'suballe', 'aalle', 'salle'], sbc.tgl_alle)
-dispatcher.add_handler(alle_handler)
-
-# ['abo_', 'sub_', 'abo', 'sub', 'a']
-
-# bot.send_message(chat_id=402239048, text="Automated text")
 
 updater.start_polling()
 updater.idle()
