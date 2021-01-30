@@ -65,22 +65,23 @@ Sie können zwischen Bot-Tatstur und normaler Tatstur mit einer Schaltfläche \
 in der Text-Zeile hin und her wechseln.\n\
 Hervorgehoben Befehle sind zudem klickbar.\n\n\
 Bleiben Sie gesund!\n\
-Corona Bot Kreis Ahrweiler', reply_markup=kb.menu_kb, chat_id=update.effective_chat.id)
+Corona Bot Kreis Ahrweiler', reply_markup=kb.inline_more, chat_id=update.effective_chat.id)
 
 
 def menu_menu(update, context):
-    context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
-            /abo   /zeig   /mehr',
+    context.bot.send_message(text='Was möchten Sie als nächstes tun?',
                              reply_markup=kb.inline_menu, chat_id=update.effective_chat.id)
+
 
 def menu_show(update, context):
     context.bot.send_message(text='Bitte wählen Sie eine Region.',
-                             reply_markup=kb.show_kb, chat_id=update.effective_chat.id)
+                             reply_markup=kb.inline_show, chat_id=update.effective_chat.id)
 
 
 def menu_abo(update, context):
     context.bot.send_message(text='Bitte wählen Sie eine Region.',
-                             reply_markup=kb.abo_kb, chat_id=update.effective_chat.id)
+                             reply_markup=kb.inline_sub, chat_id=update.effective_chat.id)
+
 
 
 def show(update, context):
@@ -99,19 +100,20 @@ def show(update, context):
             path = f"visuals/{city}-{date}.png"
             print(path)
             with open(path, "rb") as img:
-                context.bot.send_message(text='\
-            /abo   /zeig   /menu',\
-                                        chat_id=update.effective_chat.id)
-                context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
+
+                message = context.bot.send_photo(photo=img, chat_id=update.effective_chat.id,
+                                                 reply_markup=kb.inline_show)
             break #if this point is reached, a valid file is found
         except:
             pass #trying next file
     #if no file was created in the last five days
     else:
-        context.bot.send_message(text=f"Es ist kein aktueller Graph für {city} verfügbar.\n\
+        message = context.bot.send_message(text=f"Es ist kein aktueller Graph für {city} verfügbar.\n\
 Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
 Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
-Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
+Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id, reply_markup=kb.inline_show)
+
+    return message
 
 def methods(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=kb.menu_kb,
