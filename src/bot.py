@@ -5,7 +5,7 @@ import time
 import os
 
 from telegram.ext import Updater
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters
 from telegram import Bot
 from telegram import error
@@ -14,6 +14,7 @@ import commands.commands as cmd
 import commands.mod_commands as mdc
 import commands.message_handlers as msh
 import commands.subscription_commands as sbc
+import commands.handle_callback as hcb
 
 import data_handling.csv_database as csv_database
 import data_handling.analyzer as ana
@@ -130,6 +131,8 @@ dispatcher.add_handler(methods_handler)
 
 notify_handler = CommandHandler("notify", mdc.notify_all)
 dispatcher.add_handler(notify_handler)
+
+dispatcher.add_handler(CallbackQueryHandler(hcb.handle_callback))
 
 ####
 # kreis
