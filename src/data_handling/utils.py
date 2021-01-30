@@ -19,4 +19,5 @@ translator = {"kreis": "kreis",
               "bad_breisig": "Bad Breisig",
               "bad_neuenahr_ahrweiler": "Bad Neuenahr-Ahrweiler",
               "bad_neuenahr": "Bad Neuenahr-Ahrweiler",
+              "bad_neuenahr-ahrweiler": "Bad Neuenahr-Ahrweiler",
               }
