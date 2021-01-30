@@ -34,14 +34,14 @@ class ChatObject:
 
         self.settings = {
             "kreis": str_to_bool(l[6]),
-            "adenau": str_to_bool(l[7]),
-            "altenahr": str_to_bool(l[8]),
-            "bad breisig": str_to_bool(l[9]),
-            "brohltal": str_to_bool(l[10]),
-            "grafschaft": str_to_bool(l[11]),
-            "bad neuenahr-ahrweiler": str_to_bool(l[12]),
-            "remagen": str_to_bool(l[13]),
-            "sinzig": str_to_bool(l[14]),
+            "Adenau": str_to_bool(l[7]),
+            "Altenahr": str_to_bool(l[8]),
+            "Bad Breisig": str_to_bool(l[9]),
+            "Brohltal": str_to_bool(l[10]),
+            "Grafschaft": str_to_bool(l[11]),
+            "Bad Neuenahr-Ahrweiler": str_to_bool(l[12]),
+            "Remagen": str_to_bool(l[13]),
+            "Sinzig": str_to_bool(l[14]),
             "all": str_to_bool(l[15]),
             }
         #logging
@@ -139,9 +139,9 @@ class Writer:
         for c in self.entries:
             o = c.settings
             text += f"{c.id};{c.type};{c.username};{c.first_name};"
-            text += f"{c.last_name};{c.first_contact};{o['kreis']};{o['adenau']};"
-            text += f"{o['altenahr']};{o['bad breisig']};{o['brohltal']};{o['grafschaft']};"
-            text += f"{o['bad neuenahr-ahrweiler']};{o['remagen']};{o['sinzig']};{o['all']};\n"
+            text += f"{c.last_name};{c.first_contact};{o['kreis']};{o['Adenau']};"
+            text += f"{o['Altenahr']};{o['Bad Breisig']};{o['Brohltal']};{o['Grafschaft']};"
+            text += f"{o['Bad Neuenahr-Ahrweiler']};{o['Remagen']};{o['Sinzig']};{o['all']};\n"
 
         with open(self.file, "w") as f:
             f.write(text)

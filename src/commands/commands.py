@@ -1,8 +1,10 @@
 import datetime
 
-from telegram import ReplyKeyboardMarkup
+from telegram import Update, CallbackQuery
+from telegram.ext import CallbackContext
 
 import data_handling.utils as utils
+import commands.keyboards as kb
 
 
 def setup(wrtr):
@@ -10,152 +12,164 @@ def setup(wrtr):
     global writer
     writer = wrtr
 
-abo_text = "\
-/abo_adenau \n/abo_altenahr \n/abo_breisig \n/abo_brohltal \n/abo_grafschaft\
-\n/abo_bad_neuenahr_ahrweiler \n/abo_remagen \n/abo_sinzig \n\
-/abo_alle\n"
-    #/kreis\n-> Die aktuellsten Zahlen für den ganzen Kreis.\n\
-    #Standardmäßig sind Sie nur für Updates zum gesamzen Kreis angemeldet.
 
-menu_kb = ReplyKeyboardMarkup([
-                    ['/abonnieren'], ['/zeig_graph'], ['/hilfe', '/about', '/methods'] \
-                    ], one_time_keyboard=False)
+"""
+Main commands of the bot that actually do something other than navigating menus and updating messages
+There are some legacy commands below
+"""
 
-#this secondary keyboard is needed to make the keyboard
-#pop up dagain when user disabled the custom keyboard and /help won't appear
-menu2_kb = ReplyKeyboardMarkup([
-                    ['/abonnieren'], ['/zeig_graph'], ['/mehr'] \
-                    ], one_time_keyboard=False)
-
-show_kb = ReplyKeyboardMarkup([
-                    ['/Adenau', '/Altenahr', '/Bad_Breisig'], \
-                    ['/Brohltal', '/Grafschaft', '/Remagen'],\
-                    ['/Sinzig', '/Bad_Neuenahr_Ahrweiler'] \
-                    ], one_time_keyboard=True)
-
-abo_kb = ReplyKeyboardMarkup([
-    ['/abo_adenau', '/abo_altenahr', '/abo_brohltal'],
-    ['/abo_grafschaft', '/abo_remagen', '/abo_sinzig'],
-    ['/abo_alle', '/abo_bad_breisig'],
-    ['/abo_bad_neuenahr_ahrweiler',]
-    ], one_time_keyboard=True)
 
 def start(update, context):
     """Command triggered at /start"""
-    print(context.args)
+
+    # extracting name of user
     name = ""
-    if (fname := update.message.chat.first_name):
+    if fname := update.message.chat.first_name:
         name = f"{fname} "
-    if (lname := update.message.chat.last_name):
+    if lname := update.message.chat.last_name:
         name += f"{lname} "
     if not name:
         name = f"{update.message.chat.username} "
 
-    context.bot.send_message(text=f"Hallo {name.strip()},\n\
-dieser Bot kann Ihnen täglich ein Update senden, so bald es neue Zahlen gibt.\n\
-Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates Projekt handelt.\n\
-\n\
-Mit freundlichen Grüßen und bleiben Sie gesund!\n\
-Covid Update Bot", reply_markup=menu_kb, chat_id=update.effective_chat.id)
+    context.bot.send_message(
+        text=f"Hallo {name.strip()},\n"
+             "dieser Bot kann Ihnen täglich die neusten Covid-19 Fallzahlen aus von Ihnen abonnierten Regionen senden.\n\n"
+             "Zusätzlich können Sie jederzeit die aktuelsten Zahlen zu einer Region aus dem Kreis abrufen.\n\n"
+             "Bitte nehmen Sie zur Kenntniss, dass es sich bei dem Bot um ein privates Projekt handelt.\n"
+             "Mit freundlichen Grüßen und bleiben Sie gesund!\n"
+             "Covid Update Bot",
+        reply_markup=kb.inline_start, chat_id=update.effective_chat.id)
 
-    context.bot.send_message(chat_id=update.effective_chat.id,
-text=f'Bitte wählen Sie aus den angegebenen Optionen aus, was Sie tun möchten.\n\
-Wählen Sie die Regionen aus, zu denen Sie automatische Updates erhalten wollen:\n\
-/abonnieren\n\
-Lassen Sie sich einzelne Graphen anzeigen:\n\
-/zeig_graph\n\
-Zeigt Ihnen eine Liste von Befehlen an:\n\
-/hilfe\n\
-')
+    # saving chat/ user to database
     writer.add(update.message.chat)
 
 
-def help(update, context):
-    """The help command"""
-    context.bot.send_message(text=f'Hallo, \
-das hier sind alle verfügbaren Befehle:\n\n\
-/abo - Öffnet ein Menü zur Auswahl gewünschter Abonnements.\n\
-Erneutes Eingeben eines Befehls deabonniert die angegebene Kategorie.\n\n\
-\
-/zeig - Öffnet einen Dialog, in dem Sie den Graphen zu einer Region abrufen können.\n\
-\n\
-Jeden Befehl, den Sie in einem Dialog finden, können Sie auch von Hand eingeben.\n\n\
-Ihnen wird das Menü nicht angezeigt?\n\
-Nutzen Sie /menu\n\
-Sie können zwischen Bot-Tatstur und normaler Tatstur mit einer Schaltfläche \
-in der Text-Zeile hin und her wechseln.\n\
-Hervorgehoben Befehle sind zudem klickbar.\n\n\
-Bleiben Sie gesund!\n\
-Corona Bot Kreis Ahrweiler', reply_markup=menu_kb, chat_id=update.effective_chat.id)
+def subscribe(update: Update, query: CallbackQuery, location: str) -> None:
+    """
+    Inline command responsible for handling subscriptions
+
+    :param update: Telegram Update Object for getting right user
+    :param query: Telegram Query Object for inline functionality
+    :param location: Location that should be toggled
+
+    - Adds user to database
+    - Toggles status of chosen location
+    - Updates message
+    - Saves new settings to db
+    """
+
+    # getting chat by using the writer.add method
+    # it checks database and adds chat if not already existing
+    # the users chat will be returned
+    chat = writer.add(update.effective_chat)
+
+    settings = chat.settings  # settings of that chat contain subscription status
+    # if location is not subscribed - subscribing
+    if not settings[location]:
+        settings[location] = True
+        query.edit_message_text(text=f'Sie haben {location} abonniert',
+                                reply_markup=kb.inline_sub_soft)
+
+    # location is subscribed - settings subscription to false
+    else:
+        settings[location] = False
+        query.edit_message_text(text=f'Sie haben {location} deabonniert',
+                                reply_markup=kb.inline_sub_soft)
+
+    # writing db to store changes
+    writer.write()
 
 
-def menu_menu(update, context):
-    context.bot.send_message(text='Was wollen Sie als nächstes tun?\n\
-            /abo   /zeig   /mehr',
-                reply_markup=menu2_kb, chat_id=update.effective_chat.id)
+def show(update: Update, context: CallbackContext, city='', query=None):
+    """
+    Shows graph of a given location
 
-def menu_show(update, context):
-    context.bot.send_message(text='Bitte wählen Sie eine Region.',
-                reply_markup=show_kb, chat_id=update.effective_chat.id)
+    :param update: Telegram Update Object
+    :param context: Telegram Context Object
+    :param city: Name of the requested location
+    :param query: Inline Query
 
+    Tries to find a graph of location generated in last five days\n
+    Sends Error Message when no graph is available\n
+    Graphs are always sent as a new message, there is no option for inline graphs
 
-def menu_abo(update, context):
-    context.bot.send_message(text='Bitte wählen Sie eine Region.',
-                reply_markup=abo_kb, chat_id=update.effective_chat.id)
+    """
 
+    # this line exists to support legacy commands like /sinzig that request a graph via command
+    if city == '':
+        city = utils.translator[update['message']['text'][1:].lower()]
 
-def show(update, context):
-    city = ""
-    #getting word that actually triggerd that command
-    #using the mapping dict from csv_utils
-    city = utils.translator[update['message']['text'][1:].lower()]
-    
-    #actual part for getting and sending the graph
+    # getting date form today for building filename
+    # used to go trough the last five possible filenames
     today = datetime.date.today()
-    #used to go trough the last five possible filenames
-    # -> if a day has no data yet, the bot will search his "archive"
-    for i in range(5): 
-        try: #trying to open a filename
+
+    for i in range(5):
+        """Iterating trough last five days"""
+
+        try:  # trying to open a filename
             date = today - datetime.timedelta(i)
             path = f"visuals/{city}-{date}.png"
             print(path)
             with open(path, "rb") as img:
-                context.bot.send_message(text='\
-            /abo   /zeig   /menu',\
-                                        chat_id=update.effective_chat.id)
-                context.bot.send_photo(photo=img, chat_id=update.effective_chat.id)
-            break #if this point is reached, a valid file is found
+
+                # sending message
+                message = context.bot.send_photo(photo=img,
+                                                 chat_id=update.effective_chat.id,
+                                                 reply_markup=kb.inline_show)
+            # if this point is reached, a valid file is found
+            break
+
+        # filename was invalid, passing exception
         except:
-            pass #trying next file
-    #if no file was created in the last five days
+            pass  # trying next file
+
+    # if no file was created in the last five days
     else:
-        context.bot.send_message(text=f"Es ist kein aktueller Graph für {city} verfügbar.\n\
-Sind sie sicher, dass Sie eine gültige Region eigegeben haben? - \
-Die Schlüsselwörter sind die selben, die Sie zum abonnieren verwenden. \n\
-Nutzen Sie /help für mehr Informationen", chat_id=update.effective_chat.id)
+        message = context.bot.send_message(
+            text=f"Es ist kein aktueller Graph für {city} verfügbar.\n"
+                 "Dies ist der Fall, wenn der Bot seit 5 Tagen keine neuen Daten mehr erhalten hat.\n"
+                 "Bitte melden Sie diesen Vorfall auf GitHub:\nhttps://github.com/nonchris/covid-data-bot/issues",
+            chat_id=update.effective_chat.id, reply_markup=kb.inline_show)
 
-def methods(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=menu_kb,
-                             text="Aktuelle Fallzahlen:\n\n\
-Die aktuellen Zahlen werden von der Website des Kreis Ahrweiler bezogen.\n\
-Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten verfügbaren Wert gerechnet.\
-In der Regel entspricht dies dem Wert des Vortags. Eine Lücke in den Daten wird visuell dargestellt.\n\
-\n\n\
-Inzidenz:\n\n\
-Es wird die ganz normale Formel zur Berchnung, der Inzidenz verwendet.\n\
-Infizierte x 100000 / Einwohner\n\
-Mehr Informationen zur Berechnung, Rechenfehlern und Abweichungen finden Sie hier:\n\
-https://github.com/nonchris/covid-data-bot/pull/12\n\n\
-Mehr über den Bot: /about")
+    return message
 
-def about(update, context):
-    context.bot.send_message(text='Dieser Bot ist ein Open Source Projekt.\n\
-Das bedeutet, dass Sie den gesamten Quelltext online einsehen können.\n\
-Dieses Projekt steht weder mit dem Kreis Ahrweiler, \
-noch einer anderen Behörde in Verbindung.\n\
-Für Richtigkeit und Vollständigkeit der Daten wird keine Haftung übernommen.\n\
-https://github.com/nonchris/covid-data-bot', \
-        chat_id=update.effective_chat.id, reply_markup=menu_kb)
+
+def bot_help(update, context):
+    """Legacy help-command, new one is in inline_commands.py"""
+    context.bot.send_message(
+        text=f'Hallo, das hier sind alle verfügbaren Befehle:\n\n'
+             '/abo - Öffnet ein Menü zur Auswahl gewünschter Abonnements.\n'
+             'Erneutes Eingeben eines Befehls deabonniert die angegebene Kategorie.\n\n'
+
+             '/zeig - Öffnet einen Dialog, in dem Sie den Graphen zu einer Region abrufen können.\n\n'
+             'Die Auswahl innerhalb eines Dialoges ist über die Buttons unterhalb der gesendeten Nachricht möglich.\n\n'
+             'Ihnen wird das Menü nicht angezeigt?\n'
+             'Schreiben Sie dem Bot eine beliebige Nachricht und er sendet Ihnen ein neues Hauptmenü.\n'
+             'Hervorgehoben Befehle und Felder unter Nachrichten sind klickbar.\n\n'
+             'Bleiben Sie gesund!\n'
+             'Corona Bot Kreis Ahrweiler', reply_markup=kb.inline_more, chat_id=update.effective_chat.id)
+
+
+"""
+Legacy main commands, which are still usable.
+They all point to new inline keyboards
+"""
+
+
+def menu_menu(update, context):
+    context.bot.send_message(text='Was möchten Sie als nächstes tun?',
+                             reply_markup=kb.inline_menu, chat_id=update.effective_chat.id)
+
+
+def menu_show(update, context):
+    context.bot.send_message(text='Bitte wählen Sie eine Region.',
+                             reply_markup=kb.inline_show, chat_id=update.effective_chat.id)
+
+
+def menu_abo(update, context):
+    context.bot.send_message(text='Bitte wählen Sie eine Region.',
+                             reply_markup=kb.inline_sub, chat_id=update.effective_chat.id)
+
 
 def caps(update, context):
     """
