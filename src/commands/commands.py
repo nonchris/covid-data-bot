@@ -1,5 +1,7 @@
 import datetime
 
+from telegram import Update, CallbackQuery
+
 import data_handling.utils as utils
 import commands.keyboards as kb
 
@@ -81,6 +83,42 @@ def menu_show(update, context):
 def menu_abo(update, context):
     context.bot.send_message(text='Bitte wählen Sie eine Region.',
                              reply_markup=kb.inline_sub, chat_id=update.effective_chat.id)
+
+
+def subscribe(update: Update, query: CallbackQuery, location: str) -> None:
+    """
+    Inline command responsible for handling subscriptions
+
+    :param update: Telegram Update Object for getting right user
+    :param query: Telegram Query Object for inline functionality
+    :param location: Location that should be toggled
+
+    - Adds user to database
+    - Toggles status of chosen location
+    - Updates message
+    - Saves new settings to db
+    """
+
+    # getting chat by using the writer.add method
+    # it checks database and adds chat if not already existing
+    # the users chat will be returned
+    chat = writer.add(update.effective_chat)
+
+    settings = chat.settings  # settings of that chat contain subscription status
+    # if location is not subscribed - subscribing
+    if not settings[location]:
+        settings[location] = True
+        query.edit_message_text(text=f'Sie haben {location} abonniert',
+                                reply_markup=kb.inline_sub_soft)
+
+    # location is subscribed - settings subscription to false
+    else:
+        settings[location] = False
+        query.edit_message_text(text=f'Sie haben {location} deabonniert',
+                                reply_markup=kb.inline_sub_soft)
+
+    # writing db to store changes
+    writer.write()
 
 
 def show(update, context, city='', query=None):

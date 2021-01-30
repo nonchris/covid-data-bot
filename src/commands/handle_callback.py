@@ -30,12 +30,14 @@ def handle_callback(update: Update, context: CallbackContext):
     command_switch = {
         'back': commands.menu_menu,
         'show': commands.show,
+        'sub': commands.subscribe,
 
         'methods': incom.methods,
         'about': incom.about,
         'more': incom.menu_more,
         'help': incom.bot_help,
         'menu_show': incom.menu_show,
+        'menu_sub': incom.menu_sub,
         'softback': incom.soft_back,
     }
 
@@ -48,6 +50,7 @@ def handle_callback(update: Update, context: CallbackContext):
     # this is triggered when a new message will be sent so the chat is more clean
     # used in show/ subscription and 'back' commands
     if key.startswith('clear'):
+        print("clearing", key)
         query.edit_message_reply_markup(reply_markup=InlineKeyboardMarkup([[]]))
         key = key.replace('clear', '')
 
@@ -57,7 +60,7 @@ def handle_callback(update: Update, context: CallbackContext):
 
     # catching sub commands because it needs a special input
     elif key.startswith('sub'):
-        print("Sub isn't supported yet")
+        command_switch['sub'](update, query, translator[key.replace('sub', '')])
 
     # all other commands are 'normal'
     else:

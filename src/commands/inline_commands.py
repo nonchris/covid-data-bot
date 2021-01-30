@@ -45,7 +45,7 @@ def bot_help(query):
     """The help command - now inline"""
 
     query.edit_message_text(reply_markup=kb.inline_more,
-    text=f'Wählen Sie unter "Abonnieren" die Regionen aus, zu denen der Bot Ihnen automatisch neue Zahlen senden soll.\n\
+                            text=f'Wählen Sie unter "Abonnieren" die Regionen aus, zu denen der Bot Ihnen automatisch neue Zahlen senden soll.\n\
 Standardmäßig sind  keine Regionen abonniert.\n\n\
 Unter "Graphen" können Sie jederzeit den neusten Graph zu einer Region abrufen.\n\n\
 "Mehr" bietet Ihnen zusätzliche Informationen über den Bot.\n\n\
@@ -58,7 +58,7 @@ Bleiben Sie gesund!\n\
 
 
 def menu_show(query):
-    """Displays main menu"""
+    """Displays show menu"""
 
     print(kb.inline_show_soft)
     print("eyy")
@@ -66,8 +66,18 @@ def menu_show(query):
                             reply_markup=kb.inline_show_soft)
 
 
+def menu_sub(query):
+    """Displays main menu"""
+    query.edit_message_text(reply_markup=kb.inline_sub_soft,
+                            text='Welche Regionen möchten Sie abonnieren?\n'
+                                 'Sobald neue Zahlen verfügbar sind, wird Ihnen die Grafik zu allen '
+                                 'abonnierten Regionen geschickt.\n'
+                                 'Durch erneutes Wählen einer Region deabonnieren Sie Updates.',)
+
+
 def soft_back(query):
     """Back command that edits message instead of sending a new one"""
 
     query.edit_message_text(text='Was möchten Sie als nächstes tun?',
                             reply_markup=kb.inline_menu)
+
