@@ -47,7 +47,7 @@ def send_update(date):
 
         for chat in writer.entries:
             s = chat.settings
-            if s[city.lower()] or s["all"]:
+            if s[city] or s["all"]:
                 # print(path)
                 try:
                     logging.info(f"SENDING {city: <12} to {chat.id}")
@@ -58,7 +58,7 @@ def send_update(date):
                 time.sleep(0.04)  # block that makes sure that 30 messages per second aren't exceeded
             else:
                 logging.info(
-                    f"Ignoring {city: <11} on {chat.id} - {s[city.lower()]} ({type(s[city.lower()])}) - {s['all']} ({type(s['all'])})")
+                    f"Ignoring {city: <11} on {chat.id} - {s[city]} ({type(s[city])}) - {s['all']} ({type(s['all'])})")
 
 
 def make_request():
