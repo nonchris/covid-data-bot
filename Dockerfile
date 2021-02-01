@@ -16,8 +16,6 @@ VOLUME /app/
 VOLUME /app/data/
 WORKDIR /app
 
-COPY src/requirements.txt /app/
-RUN python3 -m pip install -r /app/requirements.txt
 COPY src/ /app/
 
 COPY ./entrypoint.sh /
