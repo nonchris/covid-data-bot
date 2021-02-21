@@ -79,23 +79,26 @@ class JSONMaker:
         # controlling if expected structures exist
         # infected number
         if line.find(f'{captures[0]} Infektionen gesamt') == -1:
-            logging.error(f"INFECTIONS KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
+            logging.error(f"'INFECTIONS' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
             return False
 
         # recovered number
-        if line.find(f'{captures[1]} genesen') == -1:
-            logging.error(f"RECOVERED KEYWORD NOT AT EXPECTED POSITION!- City: {city}\n{line}")
+        # current version is Genesene, genesen is legacy, Genese is stupidity
+        if line.find(f'{captures[1]} genesen') == -1 and line.find(f'{captures[1]} Genesene') == -1 \
+                and line.find(f'{captures[1]} Genese') == -1:
+            logging.error(f"'RECOVERED KEYWORD' NOT AT EXPECTED POSITION!- City: {city}\n{line}")
             return False
 
         # deceased number - can be 'person' or 'personen' (plural)
         if line.find(f'{captures[2]} Person verstorben') == -1 and line.find(
-                f'{captures[2]} Personen verstorben') == -1:
-            logging.error(f"DECEASED KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
+                f'{captures[2]} Personen verstorben') == -1 and line.find(f'{captures[2]} Verstorbene') == -1:
+            logging.error(f"'DECEASED' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
             return False
 
         # currently infected
-        if line.find(f'{captures[3]} aktuell infizierte') == -1:
-            logging.error(f"CURRENTLY INFECTED KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
+        # current version 'aktuell Infizierte', legacy 'aktuell infizierte (Personen)' -> using lower()
+        if line.lower().find(f'{captures[3]} aktuell infizierte') == -1:
+            logging.error(f"'CURRENTLY INFECTED' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
             return False
 
         return True
@@ -137,7 +140,8 @@ class JSONMaker:
                     continue  # going straight to next word
 
             # finally extracting numbers from line
-            captures = re.findall(r'\d+', line)
+            # checking for whitespace after number to detect only 'integers' as number and not Covid B.1.1.7
+            captures = re.findall(r'(\d+)\s', line)
 
             # checks if found numbers are described as expected, if not: exit
             if not self.validate_captures(line, captures, city=name):
