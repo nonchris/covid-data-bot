@@ -62,6 +62,10 @@ def send_update(date):
 
 
 def make_request():
+    """
+    Responsible for controlling the requests to the homepage and issuing a dispatch
+    Will be started in a separate thread.
+    """
     rq = req2.RequesterV2('https://www.kreis-ahrweiler.de/presse.php?lfdnrp=', START_NUM)
     while True:
         #rq = req.Requester(LINK)
@@ -80,7 +84,7 @@ def make_request():
             time.sleep(till_tomorrow)
 
         else:
-            logging.info(f"No new data - sleeping for {round(REQUEST_INTERVAL / 60)} minutes")
+            logging.info(f"No new data {rq.latest_nr} - sleeping for {round(REQUEST_INTERVAL / 60)} minutes")
             time.sleep(REQUEST_INTERVAL)  # requesting every hour
 
 
