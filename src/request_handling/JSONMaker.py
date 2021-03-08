@@ -137,6 +137,18 @@ class JSONMaker:
 
         return capture_dict
 
+    @staticmethod
+    def extract_numbers(line: str) -> List[str]:
+        """
+        :param line: string with numbers
+
+        extracts all 'integers' from string
+
+        :returns: List with all captured numbers
+        """
+        captures = re.findall(r'(\d+)\s', line)
+        return captures
+
     def prepare_data(self, content: list) -> Optional[Dict[Any, List[Dict[str, Union[str, Any]]]]]:
         """
         :param content: list of strings containing numbers to extract
@@ -175,7 +187,7 @@ class JSONMaker:
 
             # finally extracting numbers from line
             # checking for whitespace after number to detect only 'integers' as number and not Covid B.1.1.7
-            captures = re.findall(r'(\d+)\s', line)
+            captures = self.extract_numbers(line)
 
             # checks if found numbers are described as expected, if not: exit
             # getting a dict with the correct processed data back
