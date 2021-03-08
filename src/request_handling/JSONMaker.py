@@ -53,7 +53,7 @@ class JSONMaker:
         return False
 
     @staticmethod
-    def validate_captures(line: str, captures: list, expected_len=4, city="Unknown") -> bool:
+    def validate_captures(line: str, captures: list, expected_len=4, city="Unknown") -> Union[Dict[str, Any]]:
         """
         :params line: raw string to validate
         :params captures: list of captures
@@ -65,43 +65,53 @@ class JSONMaker:
         - searching for know pattern to see if number describes what's expegcted\n
         This process is hardcoded and fails when only a little thing in the press release changes - that's what we want!
 
-        :return: True if all checks passed else False
+        :return: Filled dict if all checks passed else empty dict
         """
 
         # abnormal amount of extracted numbers
         if len(captures) != expected_len:
             logging.error(f"FOUND WRONG AMOUNT OF NUMBERS FOR {city}! Expected: {expected_len} Gained: {len(captures)}")
-            return False  # exiting
+            return {}  # exiting
+
+        capture_dict = {}
 
         # controlling positions of keywords that declare meaning of number
         # Example: 'Verbandsgemeinde Adenau:
         # 206 Infektionen gesamt, davon 197 genesen, 2 Personen verstorben, 7 aktuell infizierte Personen;'
         # controlling if expected structures exist
         # infected number
-        if line.find(f'{captures[0]} Infektionen gesamt') == -1:
+        if line.find(f'{captures[0]} Infektionen gesamt') != -1:
+            capture_dict["infected"] = captures[0]
+        else:
             logging.error(f"'INFECTIONS' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
-            return False
+            return {}
 
         # recovered number
         # current version is Genesene, genesen is legacy, Genese is stupidity
-        if line.find(f'{captures[1]} genesen') == -1 and line.find(f'{captures[1]} Genesene') == -1 \
-                and line.find(f'{captures[1]} Genese') == -1:
+        if line.find(f'{captures[1]} genesen') != -1 or line.find(f'{captures[1]} Genesene') != -1 \
+                                                     or line.find(f'{captures[1]} Genese') != -1:
+            capture_dict["recovered"] = captures[1]
+        else:
             logging.error(f"'RECOVERED KEYWORD' NOT AT EXPECTED POSITION!- City: {city}\n{line}")
-            return False
+            return {}
 
         # deceased number - can be 'person' or 'personen' (plural)
-        if line.find(f'{captures[2]} Person verstorben') == -1 and line.find(
-                f'{captures[2]} Personen verstorben') == -1 and line.find(f'{captures[2]} Verstorbene') == -1:
+        if line.find(f'{captures[2]} Person verstorben') != -1 or line.find(
+                   f'{captures[2]} Personen verstorben') != -1 or line.find(f'{captures[2]} Verstorbene') != -1:
+            capture_dict['deceased'] = captures[2]
+        else:
             logging.error(f"'DECEASED' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
-            return False
+            return {}
 
         # currently infected
         # current version 'aktuell Infizierte', legacy 'aktuell infizierte (Personen)' -> using lower()
-        if line.lower().find(f'{captures[3]} aktuell infizierte') == -1:
+        if line.lower().find(f'{captures[3]} aktuell infizierte') != -1:
+            capture_dict["current"] = captures[3]
+        else:
             logging.error(f"'CURRENTLY INFECTED' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
-            return False
+            return {}
 
-        return True
+        return capture_dict
 
     def prepare_data(self, content: list) -> Optional[Dict[Any, List[Dict[str, Union[str, Any]]]]]:
         """
@@ -109,13 +119,13 @@ class JSONMaker:
 
         - filters lines staring with a city name
         - extracts actual numbers from those lines
-        - makes inner JSON structure from extraced numbers
+        - makes inner JSON structure from extracted numbers
 
         :return: JSON-like dict when successful else None
         """
 
         # iterating trough lines
-        pre_json = {}  # will contain inner json structure
+        city_json = {}  # will contain inner json structure (each city one dict)
         for line in content:
             # splitting because the second (and maybe third) word will be the city name
             # Example - 'Verbandsgemeinde Adenau: 206 Infektionen gesamt (...)
@@ -144,23 +154,22 @@ class JSONMaker:
             captures = re.findall(r'(\d+)\s', line)
 
             # checks if found numbers are described as expected, if not: exit
-            if not self.validate_captures(line, captures, city=name):
+            # getting a dict with the correct processed data back
+            captures_dict = self.validate_captures(line, captures, city=name)
+            if not captures_dict:
                 logging.error("FAILED to validate data integrity - exit without building JSON ")
                 return None
 
             try:
-                # building structure - try is just there for case x
+                # building structure - try is there for validation that data is in JSOn shape
                 # it shouldn't be able to fail if the line made it until here
-                pre_json[name] = [
-                    {
-                        "location": name,
-                        "date": str(self.date),
-                        "infected": captures[0],
-                        "current": captures[3],
-                        "recovered": captures[1],
-                        "deceased": captures[2],
-                    }
+                captures_dict["location"] = name
+                captures_dict["date"] = str(self.date)
+                city_json[name] = [
+                    captures_dict
                 ]
+                print(captures_dict)
+                print(city_json)
 
             except Exception as e:
                 logging.error(f"FAILED BUILDING INNER BODY OF JSON")
@@ -168,7 +177,7 @@ class JSONMaker:
                 return None
 
         # TODO: CHECK FOR MATCHING KEY AMOUNT
-        return pre_json  # return structure
+        return city_json  # return structure
 
     def build_json(self, pre_json) -> dict:
         """
