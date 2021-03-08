@@ -6,6 +6,7 @@ from datetime import date
 from typing import List, Any, Dict, Union, Optional
 
 import data_handling.utils as utils
+from numpy import nan
 
 
 class JSONMaker:
@@ -68,10 +69,20 @@ class JSONMaker:
         :return: Filled dict if all checks passed else empty dict
         """
 
-        # abnormal amount of extracted numbers
-        if len(captures) != expected_len:
+        # setting expected positions of each value
+        # checking also for abnormal amount of extracted numbers
+        # TODO: EdgeCase: Not every city has a number as mutation value
+        # case for the fold press releases - four numbers and no britain mutation
+        if len(captures) == expected_len:
+            inf_pos, rec_pos, dec_pos, cur_pos, mut_pos = 0, 1, 2, 3, None
+
+        # case for new press releases five numbers, britain mutation is jacked in as 2nd value
+        elif len(captures) == expected_len+1:
+            inf_pos, rec_pos, dec_pos, cur_pos, mut_pos = 0, 2, 3, 4, 1
+
+        else:
             logging.error(f"FOUND WRONG AMOUNT OF NUMBERS FOR {city}! Expected: {expected_len} Gained: {len(captures)}")
-            return {}  # exiting
+            return {}
 
         capture_dict = {}
 
@@ -80,36 +91,49 @@ class JSONMaker:
         # 206 Infektionen gesamt, davon 197 genesen, 2 Personen verstorben, 7 aktuell infizierte Personen;'
         # controlling if expected structures exist
         # infected number
-        if line.find(f'{captures[0]} Infektionen gesamt') != -1:
-            capture_dict["infected"] = captures[0]
+        if line.find(f'{captures[inf_pos]} Infektionen gesamt') != -1:
+            capture_dict["infected"] = captures[inf_pos]
         else:
-            logging.error(f"'INFECTIONS' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
+            logging.error(f"'INFECTIONS' KEYWORD ({captures[inf_pos]}) NOT AT EXPECTED POSITION ({inf_pos})! - City: {city}\n{line}")
             return {}
 
         # recovered number
         # current version is Genesene, genesen is legacy, Genese is stupidity
-        if line.find(f'{captures[1]} genesen') != -1 or line.find(f'{captures[1]} Genesene') != -1 \
-                                                     or line.find(f'{captures[1]} Genese') != -1:
-            capture_dict["recovered"] = captures[1]
+        if line.find(f'{captures[rec_pos]} genesen') != -1 or line.find(f'{captures[rec_pos]} Genesene') != -1 \
+                                                     or line.find(f'{captures[rec_pos]} Genese') != -1:
+            capture_dict["recovered"] = captures[rec_pos]
         else:
-            logging.error(f"'RECOVERED KEYWORD' NOT AT EXPECTED POSITION!- City: {city}\n{line}")
+            logging.error(f"'RECOVERED' KEYWORD ({captures[rec_pos]}) NOT AT EXPECTED POSITION ({rec_pos})!- City: {city}\n{line}")
             return {}
 
         # deceased number - can be 'person' or 'personen' (plural)
-        if line.find(f'{captures[2]} Person verstorben') != -1 or line.find(
-                   f'{captures[2]} Personen verstorben') != -1 or line.find(f'{captures[2]} Verstorbene') != -1:
-            capture_dict['deceased'] = captures[2]
+        if line.find(f'{captures[dec_pos]} Person verstorben') != -1 or line.find(
+                   f'{captures[dec_pos]} Personen verstorben') != -1 or line.find(f'{captures[dec_pos]} Verstorbene') != -1:
+            capture_dict['deceased'] = captures[dec_pos]
         else:
-            logging.error(f"'DECEASED' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
+            logging.error(f"'DECEASED' KEYWORD ({captures[dec_pos]}) NOT AT EXPECTED POSITION ({dec_pos})! - City: {city}\n{line}")
             return {}
 
         # currently infected
         # current version 'aktuell Infizierte', legacy 'aktuell infizierte (Personen)' -> using lower()
-        if line.lower().find(f'{captures[3]} aktuell infizierte') != -1:
-            capture_dict["current"] = captures[3]
+        if line.lower().find(f'{captures[cur_pos]} aktuell infizierte') != -1:
+            capture_dict["current"] = captures[cur_pos]
         else:
-            logging.error(f"'CURRENTLY INFECTED' KEYWORD NOT AT EXPECTED POSITION! - City: {city}\n{line}")
+            logging.error(f"'CURRENTLY INFECTED' KEYWORD ({captures[cur_pos]}) NOT AT EXPECTED POSITION ({cur_pos})! - City: {city}\n{line}")
             return {}
+
+        # britain mutation - optional
+        # current '7 Fälle der britischen Mutation B.1.1.7'
+        if mut_pos:
+            if line.find(f'{captures[mut_pos]} Fälle der britischen Mutation B.1.1.7') != -1:
+                capture_dict["b117"] = captures[mut_pos]
+            else:
+                logging.error(
+                    f"'BRITAIN MUTATION' KEYWORD ({captures[mut_pos]}) NOT AT EXPECTED POSITION ({mut_pos})! - City: {city}\n{line}")
+                return {}
+        else:  # if mut_pos == None
+            logging.warning(f"'BRITAIN MUTATION' no values for today! - City: {city}\n{line}")
+            capture_dict["b117"] = nan  # setting dict value to np.nan
 
         return capture_dict
 
@@ -168,8 +192,6 @@ class JSONMaker:
                 city_json[name] = [
                     captures_dict
                 ]
-                print(captures_dict)
-                print(city_json)
 
             except Exception as e:
                 logging.error(f"FAILED BUILDING INNER BODY OF JSON")
@@ -209,7 +231,7 @@ class JSONMaker:
         # trying to create and write file
         try:
             with open(self.get_filename(), "w") as json_file:
-                json.dump(self.json, json_file, indent=4)
+                json.dump(self.json, json_file, indent=4, allow_nan=True)
                 json_file.write("\n")
 
             return True
