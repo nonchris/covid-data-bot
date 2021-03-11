@@ -108,8 +108,8 @@ class Analyzer:
         self.df["date"] = pd.to_datetime(self.df["date"], format="%Y-%m-%d")
         self.df = self.df.set_index(["date", "location"])
 
-        # converting date-sting
-        self.df = self.df.astype(int)
+        # converting date-string
+        self.df = self.df.astype(float)
         # pd.to_numeric()
 
         # calculating difference to previous day
