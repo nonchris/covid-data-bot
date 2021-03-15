@@ -128,11 +128,12 @@ class RequesterV2:
             logging.error("Failed to WRITE")
             logging.error(f"\n{traceback.format_exc()}------")
 
-    def find_latest(self, nr, speed=1.0, date_back=0) -> bool:
+    def find_latest(self, nr, speed=1.0, date_back=0, is_skip=False) -> bool:
         """
         :param nr: number to complete request link
         :param request speed: time between two requests in seconds
         :param date_back: parameter to request data from an earlier date
+        :param is_skip: don't touch this, it's here as a recursion param for edge cases
 
         Requests website:
         - builds link, links are counted upwards like release=0001 / 0002 etc
@@ -167,8 +168,15 @@ class RequesterV2:
         # checks for place-holders -> there are unlimited links for press-releases
         # 'Druckversion' is only contained by pages that contain content
         if content.text.find("Druckversion") == -1:
-            print("found nothing")
-            return False
+            # prevent an infinite loop - breaking if we already did our 'skip_try'
+            # skip-try happens below when we're hitting our first empty page
+            if is_skip:
+                print("found nothing")
+                return False
+            # one last desperate try with the next page
+            # there are rare occurrences when an empty page is between filled pages
+            # -> trying to skip an empty page by requesting one page more
+            self.find_latest(nr + 1, is_skip=True)
 
         # filtering for relevant content
         # found lines will be a list that is empty if article does not match scheme
