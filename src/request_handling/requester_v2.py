@@ -3,6 +3,7 @@ import logging
 import time
 import traceback
 from datetime import date
+from typing import Optional
 
 import requests
 
@@ -73,7 +74,7 @@ class RequesterV2:
         return self.status_json
 
     @staticmethod
-    def extract_date(lines: list) -> date:
+    def extract_date(lines: list) -> Optional[date]:
         """
         :param lines: list containing all extracted lines from request.
 
@@ -87,11 +88,15 @@ class RequesterV2:
         - retrieving last object from that new list
         - converting date to date-object using string slicing
 
-        :return: parsed date
+        :return: parsed date - if found
         """
         this_date: str = str(lines[-1]).split()[-1]
         # slicing date of the type dd.mm.yyyy
-        this_date: date = datetime.date(int(this_date[6:]), int(this_date[3:5]), int(this_date[0:2]))
+        try:
+            this_date: date = datetime.date(int(this_date[6:]), int(this_date[3:5]), int(this_date[0:2]))
+        except TypeError:
+            logging.error(f"FAILED to extract DATE! Got: {this_date}")
+            return None
 
         return this_date
 
@@ -190,7 +195,7 @@ class RequesterV2:
             self.pub_date = self.extract_date(found_lines)
 
         # we're done - found correct press-release!
-        if self.is_today(self.pub_date, date_back):  # and date != -1:
+        if self.is_today(self.pub_date, date_back) and date is not None:
             print("FOUND matching date!")
             print(self.pub_date, link)
             self.write_raw(content.text)  # writing html code
