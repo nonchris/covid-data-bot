@@ -181,7 +181,8 @@ class RequesterV2:
             # one last desperate try with the next page
             # there are rare occurrences when an empty page is between filled pages
             # -> trying to skip an empty page by requesting one page more
-            self.find_latest(nr + 1, is_skip=True)
+            return self.find_latest(nr + 1, is_skip=True)
+
 
         # filtering for relevant content
         # found lines will be a list that is empty if article does not match scheme
