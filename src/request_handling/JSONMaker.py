@@ -125,7 +125,7 @@ class JSONMaker:
         # britain mutation - optional
         # current '7 Fälle der britischen Mutation B.1.1.7'
         if mut_pos:
-            if line.find(f'{captures[mut_pos]} Fälle der britischen Mutation B.1.1.7') != -1:
+            if line.find(f'davon laborbestätigt {captures[mut_pos]} VoC') != -1:
                 capture_dict["b117"] = captures[mut_pos]
             else:
                 logging.error(
