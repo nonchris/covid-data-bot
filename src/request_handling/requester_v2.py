@@ -181,7 +181,7 @@ class RequesterV2:
             # one last desperate try with the next page
             # there are rare occurrences when an empty page is between filled pages
             # -> trying to skip an empty page by requesting one page more
-            return self.find_latest(nr + 1, is_skip=True)
+            return self.find_latest(nr + 1, speed=speed, date_back=date_back, is_skip=True)
 
 
         # filtering for relevant content
@@ -212,10 +212,13 @@ class RequesterV2:
 
 
 if __name__ == "__main__":
-
-    startpoint = 9670
-    start_back = 0
-    date_back = 7
+    """
+    A way to request data backwards.
+    Useful for filling gaps in the collected data.
+    """
+    startpoint = 9795  # start number
+    start_back = 0  # which date should be requested first? - today = 0
+    date_back = 3   # how many days back from there?
     req = RequesterV2("https://www.kreis-ahrweiler.de/presse.php?lfdnrp=", startpoint)
     for i in range(start_back, date_back):
         print(i)
