@@ -62,7 +62,7 @@ class JSONMaker:
         return False
 
     @staticmethod
-    def load_patterns(filename="data/possible_patterns.json") -> Dict[str, List[str]]:
+    def load_patterns(filename="possible_patterns.json") -> Dict[str, List[str]]:
         """
         :param filename: path to filename as string
 
