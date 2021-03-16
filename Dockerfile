@@ -17,6 +17,7 @@ VOLUME /app/data/
 WORKDIR /app
 
 COPY src/ /app/
+COPY ./possible_patterns.json /app/
 
 COPY ./entrypoint.sh /
 ENTRYPOINT ["sh", "/entrypoint.sh"]
