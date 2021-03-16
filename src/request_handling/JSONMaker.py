@@ -54,6 +54,24 @@ class JSONMaker:
         return False
 
     @staticmethod
+    def load_patterns(filename="data/possible_patterns.json") -> Dict[str, List[str]]:
+        """
+        :param filename: path to filename as string
+
+        Reads possible text patterns from json.\n
+        Idea: Patterns are defined externally to minimize code changes
+
+        :returns: patterns as dict containing lists or None if file FileNotFound
+        """
+        try:
+            with open(filename) as f:
+                lines = f.read()
+                return json.loads(lines)
+        except FileNotFoundError:
+            print(f"NO PATTERN FILE '{filename}' - EXITING BUILD PROCESS")
+            logging.error(f"NO PATTERN FILE '{filename}' - EXITING BUILD PROCESS")
+
+    @staticmethod
     def validate_captures(line: str, captures: list, expected_len=4, city="Unknown") -> Union[Dict[str, Any]]:
         """
         :params line: raw string to validate
