@@ -21,6 +21,7 @@ class JSONMaker:
         self.date = None  # holds date of data input
 
         self.status = False  # status whether everything worked
+        self.patterns = None
         self.json = {}  # final json that will be written
 
     def make_json(self, creation_date: date, content: list) -> bool:
@@ -40,6 +41,13 @@ class JSONMaker:
 
         self.status = False  # status for external access
         self.json = {}  # final JSON structure
+
+        # getting possible press release patterns from file
+        # loading it each time the function is called to allow for adjustments while code is running
+        self.patterns = JSONMaker.load_patterns()
+        if self.patterns is None:
+            # logging happens in load_checks()
+            return False
 
         # returns bool - only continuing when function worked
         pre_json = self.prepare_data(content)
