@@ -256,7 +256,9 @@ class Analyzer:
         # extending plot for disclaimer
         plt.title(f"Neuinfektionen {city} - Stand {self.date}\n")
 
-        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#8c8c8c"))
+        # red
+        color = "#f2291b" if incidence >= 100 else "#8c8c8c"
+        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=color)
 
         plt.gcf().subplots_adjust(bottom=0.28)
         # plt.gcf().autofmt_xdate()
@@ -272,9 +274,9 @@ class Analyzer:
         plt.figtext(0.5, 0.02,
                     'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich'
                     'auf der Homepage veröffentlichten Fallzahlen. \n'
-                    'Tage ohne Aktualisierung sind durch fehlende Beschriftung dargestellt.'
-                    'Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n'
-                    'Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen.'
+                    f'Für die Inzidenz wurde eine Einwohnerzahl von {self.population[city]} angenommen. '
+                    'Tage ohne Aktualisierung sind durch fehlende Beschriftung dargestellt.\n'
+                    'Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen. '
                     'Dieser Bot ist ein Open-Source Projekt und steht in keiner Verbindung zu einer Behörde.',
                     color=("#a8a8a8"), fontsize="xx-small", ha="center")  # backgroundcolor=("#dbdbdb")
 
