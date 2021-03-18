@@ -24,6 +24,7 @@ class Analyzer:
                        "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
 
         # Source: https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025
+        # Source 2: https://infothek.statistik.rlp.de/MeineHeimat/content.aspx?id=101&l=1&g=07131&tp=2
         # Numbers are from 31.12.2019
         self.population = {
             "Adenau": 13022,
@@ -33,8 +34,8 @@ class Analyzer:
             "Grafschaft": 10977,
             "Bad Neuenahr-Ahrweiler": 28468,
             "Remagen": 17116,
-            "Sinzig": 17630
-
+            "Sinzig": 17630,
+            "Kreis": 130036,
         }
 
         self.date = pub_date  # date latest date of data
