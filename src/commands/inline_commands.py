@@ -17,18 +17,26 @@ def methods(query):
     """Displays information about the used calculation methods"""
 
     query.edit_message_text(
-        text="Berechnung der Zahlen\n"
+        text="Berechnung der Daten\n---\n"
              "Aktuelle Fallzahlen:\n\n"
              "Die aktuellen Zahlen werden direkt aus den Pressemitteilungen auf der Website des Kreis Ahrweiler bezogen.\n"
-             "Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten veröffentlichten Wert gerechnet."
+             "Um die Veränderung zum Vortag zu erhalten, wird der neue Wert minus dem letzten veröffentlichten Wert gerechnet.\n"
              "In der Regel entspricht dies dem Wert des Vortages. Eine Lücke in den Daten wird durch das Auslassen der "
-             "x-Achenbeschriftung dargestellt.\n"
-             "\n\n"
+             "x-Achenbeschriftung dargestellt.\n\n"
+             "Sollte ein Tag in den Daten fehlen wird der Unterschied zum letzten vorhandenen Tag berechnet.\n"
+             "Dadurch ist der Anstieg an diesem Tag die Summe aus dem letzten und dem aktuellen Tag.\n"
+             "Werden die Daten nachgereicht, passen sich alle Werte wieder an."
+             "\n\n---\n\n"
              "Inzidenz:\n\n"
              "Es wird die ganz normale Formel zur Berchnung, der Inzidenz verwendet.\n"
-             "Infizierte x 100000 / Einwohner\n"
+             "Infizierte x 100000 / Einwohner\n\n"
+             "Ein Abweichen von der offiziellen Angabe ist möglich. "
+             "Dies liegt vermutlich an der Verwendung verschiedener Einwohnerzahlen.\n\n"
              "Mehr Informationen zur Berechnung, Rechenfehlern und Abweichungen finden Sie hier:\n"
-             "https://github.com/nonchris/covid-data-bot/pull/12",
+             "https://github.com/nonchris/covid-data-bot/pull/12\n\n"
+             "Die Einwohnerzahlen zur Berechnung werden vom Statistischen Landesamt RLP bezogen:\n"
+             "https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025\n"
+             "https://infothek.statistik.rlp.de/MeineHeimat/content.aspx?id=101&l=1&g=07131&tp=2",
         reply_markup=kb.inline_more)
 
 
