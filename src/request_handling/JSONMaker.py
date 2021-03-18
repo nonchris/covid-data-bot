@@ -21,6 +21,7 @@ class JSONMaker:
         self.date = None  # holds date of data input
 
         self.status = False  # status whether everything worked
+        self.patterns = None
         self.json = {}  # final json that will be written
 
     def make_json(self, creation_date: date, content: list) -> bool:
@@ -41,6 +42,13 @@ class JSONMaker:
         self.status = False  # status for external access
         self.json = {}  # final JSON structure
 
+        # getting possible press release patterns from file
+        # loading it each time the function is called to allow for adjustments while code is running
+        self.patterns = JSONMaker.load_patterns()
+        if self.patterns is None:
+            # logging happens in load_checks()
+            return False
+
         # returns bool - only continuing when function worked
         pre_json = self.prepare_data(content)
         if pre_json:
@@ -54,7 +62,24 @@ class JSONMaker:
         return False
 
     @staticmethod
-    def validate_captures(line: str, captures: list, expected_len=4, city="Unknown") -> Union[Dict[str, Any]]:
+    def load_patterns(filename="possible_patterns.json") -> Dict[str, List[str]]:
+        """
+        :param filename: path to filename as string
+
+        Reads possible text patterns from json.\n
+        Idea: Patterns are defined externally to minimize code changes
+
+        :returns: patterns as dict containing lists or None if file FileNotFound
+        """
+        try:
+            with open(filename) as f:
+                lines = f.read()
+                return json.loads(lines)
+        except FileNotFoundError:
+            print(f"NO PATTERN FILE '{filename}' - EXITING BUILD PROCESS")
+            logging.error(f"NO PATTERN FILE '{filename}' - EXITING BUILD PROCESS")
+
+    def validate_captures(self, line: str, captures: list, expected_len=4, city="Unknown") -> Union[Dict[str, Any]]:
         """
         :params line: raw string to validate
         :params captures: list of captures
@@ -62,9 +87,12 @@ class JSONMaker:
         :params city: only optional for better logging
 
         Validates extracted numbers by:
-        - comparing number of captures with expected value
-        - searching for know pattern to see if number describes what's expegcted\n
-        This process is hardcoded and fails when only a little thing in the press release changes - that's what we want!
+        - comparing number of captures with expected value\n
+        - searching for known pattern to see if number describes what's expected\n
+        Patterns are loaded from 'data/possible_patterns.json'\n
+        This process fails when only a little thing in the press release differs from all expected patterns\n
+        That's what we want!\n\n
+        Pattern file is loaded each time the function gets called -> allows for adjustments while code is running
 
         :return: Filled dict if all checks passed else empty dict
         """
@@ -91,33 +119,39 @@ class JSONMaker:
         # 206 Infektionen gesamt, davon 197 genesen, 2 Personen verstorben, 7 aktuell infizierte Personen;'
         # controlling if expected structures exist
         # infected number
-        if line.find(f'{captures[inf_pos]} Infektionen gesamt') != -1:
-            capture_dict["infected"] = captures[inf_pos]
+        for pattern in self.patterns["infected"]:
+            if line.find(pattern.format(captures[inf_pos])) != -1:
+                capture_dict["infected"] = captures[inf_pos]
+                break
         else:
             logging.error(f"'INFECTIONS' KEYWORD ({captures[inf_pos]}) NOT AT EXPECTED POSITION ({inf_pos})! - City: {city}\n{line}")
             return {}
 
         # recovered number
         # current version is Genesene, genesen is legacy, Genese is stupidity
-        if line.find(f'{captures[rec_pos]} genesen') != -1 or line.find(f'{captures[rec_pos]} Genesene') != -1 \
-                                                     or line.find(f'{captures[rec_pos]} Genese') != -1:
-            capture_dict["recovered"] = captures[rec_pos]
+        for pattern in self.patterns["recovered"]:
+            if line.find(pattern.format(captures[rec_pos])) != -1:
+                capture_dict["recovered"] = captures[rec_pos]
+                break
         else:
             logging.error(f"'RECOVERED' KEYWORD ({captures[rec_pos]}) NOT AT EXPECTED POSITION ({rec_pos})!- City: {city}\n{line}")
             return {}
 
         # deceased number - can be 'person' or 'personen' (plural)
-        if line.find(f'{captures[dec_pos]} Person verstorben') != -1 or line.find(
-                   f'{captures[dec_pos]} Personen verstorben') != -1 or line.find(f'{captures[dec_pos]} Verstorbene') != -1:
-            capture_dict['deceased'] = captures[dec_pos]
+        for pattern in self.patterns["deceased"]:
+            if line.find(pattern.format(captures[dec_pos])) != -1:
+                capture_dict['deceased'] = captures[dec_pos]
+                break
         else:
             logging.error(f"'DECEASED' KEYWORD ({captures[dec_pos]}) NOT AT EXPECTED POSITION ({dec_pos})! - City: {city}\n{line}")
             return {}
 
         # currently infected
         # current version 'aktuell Infizierte', legacy 'aktuell infizierte (Personen)' -> using lower()
-        if line.lower().find(f'{captures[cur_pos]} aktuell infizierte') != -1:
-            capture_dict["current"] = captures[cur_pos]
+        for pattern in self.patterns["current"]:
+            if line.lower().find(pattern.format(captures[cur_pos])) != -1:
+                capture_dict["current"] = captures[cur_pos]
+                break
         else:
             logging.error(f"'CURRENTLY INFECTED' KEYWORD ({captures[cur_pos]}) NOT AT EXPECTED POSITION ({cur_pos})! - City: {city}\n{line}")
             return {}
@@ -125,8 +159,10 @@ class JSONMaker:
         # britain mutation - optional
         # current '7 Fälle der britischen Mutation B.1.1.7'
         if mut_pos:
-            if line.find(f'davon laborbestätigt {captures[mut_pos]} VoC') != -1:
-                capture_dict["b117"] = captures[mut_pos]
+            for pattern in self.patterns["voc_pos"]:
+                if line.find(pattern.format(captures[mut_pos])) != -1:
+                    capture_dict["b117"] = captures[mut_pos]
+                    break
             else:
                 logging.error(
                     f"'BRITAIN MUTATION' KEYWORD ({captures[mut_pos]}) NOT AT EXPECTED POSITION ({mut_pos})! - City: {city}\n{line}")

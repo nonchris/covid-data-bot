@@ -1,0 +1,7 @@
+{
+  "infected": ["{} Infektionen gesamt"],
+  "recovered": ["{} genesen", "{} Genesene", "{} Genese"],
+  "deceased": ["{} Person verstorben", "{} Personen ver-storben", "{} Personen verstorben", "{} Verstorbene"],
+  "current": ["{} aktuell infizierte"],
+  "voc_pos": ["{} Fälle der britischen Mutation B.1.1.7", "davon laborbestätigt {} VoC"]
+}
