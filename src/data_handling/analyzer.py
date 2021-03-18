@@ -24,6 +24,7 @@ class Analyzer:
                        "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
 
         # Source: https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025
+        # Source 2: https://infothek.statistik.rlp.de/MeineHeimat/content.aspx?id=101&l=1&g=07131&tp=2
         # Numbers are from 31.12.2019
         self.population = {
             "Adenau": 13022,
@@ -33,8 +34,8 @@ class Analyzer:
             "Grafschaft": 10977,
             "Bad Neuenahr-Ahrweiler": 28468,
             "Remagen": 17116,
-            "Sinzig": 17630
-
+            "Sinzig": 17630,
+            "Kreis": 130036,
         }
 
         self.date = pub_date  # date latest date of data
@@ -53,6 +54,8 @@ class Analyzer:
             self.calc_data()
 
             # self.visualize()
+
+        self.add_kreis()
 
     def read_data(self):
         """
@@ -106,7 +109,9 @@ class Analyzer:
 
         # setting indices
         self.df["date"] = pd.to_datetime(self.df["date"], format="%Y-%m-%d")
-        self.df = self.df.set_index(["date", "location"])
+        self.df = self.df.set_index(["date"])
+        # dropping location column that contains the name of the location in each row
+        self.df = self.df.drop(columns="location")
 
         # converting date-string
         self.df = self.df.astype(float)
@@ -118,6 +123,21 @@ class Analyzer:
         # saving dataframes to dictionaries using city as keys
         self.dataframes[self.city] = self.df
         self.diffframes[self.city] = diff
+
+    def add_kreis(self):
+        """
+       Special calculation for 'Kreis'-dataframe which is the sum of all other dataframes
+       The function iterates over all dataframes and calculates the added dataframes and diffframes
+       """
+
+        df = 0
+        diff = 0
+        for k in self.dataframes.keys():
+            df += self.dataframes[k]
+            diff += self.diffframes[k]
+
+        self.dataframes["Kreis"] = df
+        self.diffframes["Kreis"] = diff
 
     def is_missing(self, df: pd.DataFrame, date: datetime.date, counter: int) -> int:
         """
@@ -236,7 +256,9 @@ class Analyzer:
         # extending plot for disclaimer
         plt.title(f"Neuinfektionen {city} - Stand {self.date}\n")
 
-        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=("#8c8c8c"))
+        # red
+        color = "#f2291b" if incidence >= 100 else "#8c8c8c"
+        plt.figtext(0.124, 0.89, f"Inzidenz: {incidence}", fontsize="small", color=color)
 
         plt.gcf().subplots_adjust(bottom=0.28)
         # plt.gcf().autofmt_xdate()
@@ -252,9 +274,9 @@ class Analyzer:
         plt.figtext(0.5, 0.02,
                     'Dies ist eine Visualisierung der vom Kreis Ahrweiler täglich'
                     'auf der Homepage veröffentlichten Fallzahlen. \n'
-                    'Tage ohne Aktualisierung sind durch fehlende Beschriftung dargestellt.'
-                    'Eine Lücke in den Daten führt zu einem "doppelten" Anstieg am Folgetag.\n'
-                    'Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen.'
+                    f'Für die Inzidenz wurde eine Einwohnerzahl von {self.population[city]} angenommen. '
+                    'Tage ohne Aktualisierung sind durch fehlende Beschriftung dargestellt.\n'
+                    'Für die Richtigkeit der Zahlen wird keinerlei Haftung übernommen. '
                     'Dieser Bot ist ein Open-Source Projekt und steht in keiner Verbindung zu einer Behörde.',
                     color=("#a8a8a8"), fontsize="xx-small", ha="center")  # backgroundcolor=("#dbdbdb")
 

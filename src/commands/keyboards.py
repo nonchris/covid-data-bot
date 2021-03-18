@@ -115,9 +115,9 @@ inline_start = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callbac
 # more menu
 inline_more = InlineKeyboardMarkup([[back_button_soft,
                                      InlineKeyboardButton('Hilfe', callback_data='help'),
-                                     InlineKeyboardButton('Berechnung', callback_data='methods'),
+                                     InlineKeyboardButton('Über Bot', callback_data='about'),
                                      InlineKeyboardButton('Kontakt', callback_data='contact')],
-                                    [InlineKeyboardButton('Über den Bot', callback_data='about'),
+                                    [InlineKeyboardButton('Infos zur Berechnung', callback_data='methods'),
                                      InlineKeyboardButton('Teilen', callback_data='share')]])
 
 # menu for showing graphs

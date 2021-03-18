@@ -33,7 +33,7 @@ class ChatObject:
         self.first_contact = l[5]
 
         self.settings = {
-            "kreis": str_to_bool(l[6]),
+            "Kreis": str_to_bool(l[6]),
             "Adenau": str_to_bool(l[7]),
             "Altenahr": str_to_bool(l[8]),
             "Bad Breisig": str_to_bool(l[9]),
