@@ -1,7 +1,7 @@
 city_list = ["Adenau", "Altenahr", "Bad Breisig", "Brohltal",
-             "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig"]
+             "Grafschaft", "Bad Neuenahr-Ahrweiler", "Remagen", "Sinzig", "Kreis"]
 
-translator = {"kreis": "kreis",
+translator = {"kreis": "Kreis",
               "adenau": "Adenau",
               "altenahr": "Altenahr",
               "breisig": "Bad Breisig",
