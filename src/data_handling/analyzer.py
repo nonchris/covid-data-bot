@@ -107,7 +107,9 @@ class Analyzer:
 
         # setting indices
         self.df["date"] = pd.to_datetime(self.df["date"], format="%Y-%m-%d")
-        self.df = self.df.set_index(["date", "location"])
+        self.df = self.df.set_index(["date"])
+        # dropping location column that contains the name of the location in each row
+        self.df = self.df.drop(columns="location")
 
         # converting date-string
         self.df = self.df.astype(float)
