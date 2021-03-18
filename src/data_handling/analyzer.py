@@ -55,6 +55,8 @@ class Analyzer:
 
             # self.visualize()
 
+        self.add_kreis()
+
     def read_data(self):
         """
         Reads multiple JSON-Files in data-frame
@@ -121,6 +123,21 @@ class Analyzer:
         # saving dataframes to dictionaries using city as keys
         self.dataframes[self.city] = self.df
         self.diffframes[self.city] = diff
+
+    def add_kreis(self):
+        """
+       Special calculation for 'Kreis'-dataframe which is the sum of all other dataframes
+       The function iterates over all dataframes and calculates the added dataframes and diffframes
+       """
+
+        df = 0
+        diff = 0
+        for k in self.dataframes.keys():
+            df += self.dataframes[k]
+            diff += self.diffframes[k]
+
+        self.dataframes["Kreis"] = df
+        self.diffframes["Kreis"] = diff
 
     def is_missing(self, df: pd.DataFrame, date: datetime.date, counter: int) -> int:
         """
