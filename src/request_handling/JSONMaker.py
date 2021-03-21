@@ -203,6 +203,10 @@ class JSONMaker:
             # Example - 'Verbandsgemeinde Adenau: 206 Infektionen gesamt (...)
             # Example -  Verbandsgemeinde Bad Breisig: 239 Infektionen gesamt (...)
             split = line.split()
+
+            # a sentence this short probably won't be needed, but it causes IndexErrors below - skipping
+            if len(split) < 3:
+                continue
             one_word = split[1][:-1].lower()  # holds name in first case
             two_words = f"{split[1]} {split[2][:-1]}".lower()  # for second case
 
