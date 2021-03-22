@@ -139,38 +139,6 @@ class Analyzer:
         self.dataframes["Kreis"] = df
         self.diffframes["Kreis"] = diff
 
-    def is_missing(self, df: pd.DataFrame, date: datetime.date, counter: int) -> int:
-        """
-        :param df: dataframe to check
-        :param date: date to check if exists
-        :param counter: counts how many days are missing (recursive)
-
-        Checks for missing data from a certain date on backwards
-        Built recursive - will call itself until day with data is reached
-
-        :returns: number of missing dates
-        """
-
-        try:
-            # trying to get data
-            x = df.loc[pd.to_datetime(pd.to_datetime(datetime.date.today() - date))]
-
-            # if code runs trough at the first try - preventing divide by zero error
-            if counter == 0:
-                counter = 1
-            return counter
-
-        # if data is missing, a KeyError will be raised
-        # -> catching and trying for next day
-        except KeyError:
-            # keeping track of missing days
-            counter += 1
-            # calling function again for next day
-            counter = self.is_missing(df, date - datetime.timedelta(1), counter)
-
-            # passing counter up
-            return counter
-
     def incidence(self, city: str) -> int:  # returns incidence value
         """
         :param city: name of df-index to address
