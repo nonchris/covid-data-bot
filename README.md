@@ -7,11 +7,11 @@ This bot sends automated updates via telegram, when new covid-numbers are publis
 
 ### Process
 To do this the bot excecutes the following steps:  
-* requests the latest covid-19 numbers from the a specified website
+* requests the latest covid-19 numbers from the specified website
 * reads html table and fits it into a json if data is from 'today'
 * generates data tables using the saved jsons and `pandas`
 * creates plots for each location from those tables
-* automatical dispatch of those images to those hwo are subscribed
+* automatical dispatch of the generated images to those who are subscribed
 
 ### Note
 The whole process is written to handle data from the _Kreis Ahrweiler_ in Rheinland-Pfalz, Germany.  
