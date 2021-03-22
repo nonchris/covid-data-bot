@@ -1,3 +1,4 @@
+import re
 import json
 import datetime
 import logging
@@ -87,8 +88,8 @@ class Analyzer:
                         self.df = pd.DataFrame(dt)
 
             except FileNotFoundError as e:
-                # print(f"data/ahrweiler-{date}.json -- not found")
-                pass
+                logging.warning(f"data/ahrweiler-{date}.json -- NOT FOUND")
+                print(f"data/ahrweiler-{date}.json -- not found")
 
             except json.decoder.JSONDecodeError as e:
                 logging.error(f"Error Encoding json for {date} - {e}")
@@ -245,5 +246,61 @@ class Analyzer:
 
 
 if __name__ == '__main__':
-    ana = Analyzer(datetime.date.today() - datetime.timedelta(1))
-    ana.incidence("Sinzig")
+    date = datetime.date(2021, 3, 21)
+    # lists for populations and and incidences
+    their_pop = []
+    our_pop = []
+    their_inc = []
+    our_inc = []
+    infected = []
+    dates = []
+
+    # iterate trough last days
+    for i in range(18):
+        d = date - datetime.timedelta(i)
+        # %Y-%m-%d
+        dates.append(d.strftime("%d.%m"))
+        # get incidence from saved file
+        try:
+            with open(f"../data/ahrweiler-{d}_raw.txt") as f:
+                read = f.read()
+                find = re.search(r"Die Sieben-Tage-Inzidenz für den Kreis Ahrweiler liegt bei (\d+) Neuinfektionen", read)
+                official_inc = int(find.group(1))
+        except FileNotFoundError:
+            continue
+        their_inc.append(official_inc)
+
+        # load dataframe from specific date
+        ana = Analyzer(d)
+        frame: pd.DataFrame = ana.diffframes["Kreis"]
+        # slice 7 days for incidence
+        slc = frame["infected"][len(frame)-7: len(frame)]
+        slc_sum = slc.sum()
+
+        infected.append(slc_sum)
+
+        # Own incidence
+        own_inc = ana.incidence("Kreis")
+        our_inc.append(round(own_inc))
+
+        # Used population: infected * 100k / official incidence
+        tp = int(slc_sum * 100000 / round(own_inc))
+
+        their_pop.append(tp)
+        our_pop.append(ana.population["Kreis"])
+
+    print("Infected:")
+    print(f"DT: {dates}")
+    print(f"IF: {infected}")
+    print()
+    print("Incidences:")
+    print(f"TI: {their_inc}")
+    print(f"OI: {our_inc}")
+    print(f"DF: {np.array(their_inc) - np.array(our_inc)}")
+    print()
+    print("Population:")
+    print(f"TP: {their_pop}")
+    print(f"OP: {our_pop}")
+    print(f"DF: {np.array(their_pop) - np.array(our_pop)}")
+
+
