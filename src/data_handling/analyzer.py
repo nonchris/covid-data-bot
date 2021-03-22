@@ -176,13 +176,9 @@ class Analyzer:
         :param city: name of df-index to address
 
         Makes a copy of city array and cuts last seven days cut
-        Checks if eight day got data, if not the case:\n
-            - Dividing seventh days value by number of days missing, to approximate
-            - how many cases have "really" occurred at that day
-        Then all days will be summed up and the incidence will be calculated
-        Does not cover the edge case when days last days and 8+ were empty\n
-        -> dividing 'oldest' number in seven days array by number of days 8+\n
-        -> divider will be to small by days missing at the end of the seven days array
+
+        Then all days will be summed up and the incidence will be calculated\n
+        Does not cover the edge case of missing data at the "end" of the seven days\n
 
         :return: Incidence rounded to two decimal places
         """
@@ -190,19 +186,10 @@ class Analyzer:
         days = self.diffframes[city].copy()
 
         # getting date from 7 days ago
-        seven_days_ago = pd.to_datetime(datetime.date.today() - datetime.timedelta(7))
+        seven_days_ago = pd.to_datetime(self.date - datetime.timedelta(6))
 
         # cutting last seven days out
-        seven_days = days.loc[seven_days_ago: pd.Timestamp("today")]
-
-        # checking if eighth day was missing
-        divider = self.is_missing(days, datetime.timedelta(8), 0)
-
-        # getting date of day seven - need that date type
-        last_index = seven_days.index.get_level_values("date")[0]
-
-        # approximating last days infections
-        days.loc[last_index]["infected"] = days.loc[last_index]["infected"] / 2  # divider
+        seven_days = days.loc[seven_days_ago: pd.Timestamp(self.date)]
 
         # sum of all seven days
         summed = seven_days["infected"].sum()
