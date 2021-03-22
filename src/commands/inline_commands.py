@@ -31,9 +31,8 @@ def methods(query):
              "Es wird die ganz normale Formel zur Berchnung, der Inzidenz verwendet.\n"
              "Infizierte x 100000 / Einwohner\n\n"
              "Ein Abweichen von der offiziellen Angabe ist möglich. "
-             "Dies liegt vermutlich an der Verwendung verschiedener Einwohnerzahlen.\n\n"
-             "Mehr Informationen zur Berechnung, Rechenfehlern und Abweichungen finden Sie hier:\n"
-             "https://github.com/nonchris/covid-data-bot/pull/12\n\n"
+             "Dies liegt an der Verwendung verschiedener Einwohnerzahlen, sowie der Rundung des Inzidenzwertes.\n\n"
+
              "Die Einwohnerzahlen zur Berechnung werden vom Statistischen Landesamt RLP bezogen:\n"
              "https://infothek.statistik.rlp.de/MeineHeimat/index.aspx?id=102&l=2&g=07131&tp=1025\n"
              "https://infothek.statistik.rlp.de/MeineHeimat/content.aspx?id=101&l=1&g=07131&tp=2",

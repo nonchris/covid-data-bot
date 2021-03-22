@@ -1,3 +1,4 @@
+import re
 import json
 import datetime
 import logging
@@ -87,8 +88,8 @@ class Analyzer:
                         self.df = pd.DataFrame(dt)
 
             except FileNotFoundError as e:
-                # print(f"data/ahrweiler-{date}.json -- not found")
-                pass
+                logging.warning(f"data/ahrweiler-{date}.json -- NOT FOUND")
+                print(f"data/ahrweiler-{date}.json -- not found")
 
             except json.decoder.JSONDecodeError as e:
                 logging.error(f"Error Encoding json for {date} - {e}")
@@ -139,50 +140,14 @@ class Analyzer:
         self.dataframes["Kreis"] = df
         self.diffframes["Kreis"] = diff
 
-    def is_missing(self, df: pd.DataFrame, date: datetime.date, counter: int) -> int:
-        """
-        :param df: dataframe to check
-        :param date: date to check if exists
-        :param counter: counts how many days are missing (recursive)
-
-        Checks for missing data from a certain date on backwards
-        Built recursive - will call itself until day with data is reached
-
-        :returns: number of missing dates
-        """
-
-        try:
-            # trying to get data
-            x = df.loc[pd.to_datetime(pd.to_datetime(datetime.date.today() - date))]
-
-            # if code runs trough at the first try - preventing divide by zero error
-            if counter == 0:
-                counter = 1
-            return counter
-
-        # if data is missing, a KeyError will be raised
-        # -> catching and trying for next day
-        except KeyError:
-            # keeping track of missing days
-            counter += 1
-            # calling function again for next day
-            counter = self.is_missing(df, date - datetime.timedelta(1), counter)
-
-            # passing counter up
-            return counter
-
     def incidence(self, city: str) -> int:  # returns incidence value
         """
         :param city: name of df-index to address
 
         Makes a copy of city array and cuts last seven days cut
-        Checks if eight day got data, if not the case:\n
-            - Dividing seventh days value by number of days missing, to approximate
-            - how many cases have "really" occurred at that day
-        Then all days will be summed up and the incidence will be calculated
-        Does not cover the edge case when days last days and 8+ were empty\n
-        -> dividing 'oldest' number in seven days array by number of days 8+\n
-        -> divider will be to small by days missing at the end of the seven days array
+
+        Then all days will be summed up and the incidence will be calculated\n
+        Does not cover the edge case of missing data at the "end" of the seven days\n
 
         :return: Incidence rounded to two decimal places
         """
@@ -190,19 +155,10 @@ class Analyzer:
         days = self.diffframes[city].copy()
 
         # getting date from 7 days ago
-        seven_days_ago = pd.to_datetime(datetime.date.today() - datetime.timedelta(7))
+        seven_days_ago = pd.to_datetime(self.date - datetime.timedelta(6))
 
         # cutting last seven days out
-        seven_days = days.loc[seven_days_ago: pd.Timestamp("today")]
-
-        # checking if eighth day was missing
-        divider = self.is_missing(days, datetime.timedelta(8), 0)
-
-        # getting date of day seven - need that date type
-        last_index = seven_days.index.get_level_values("date")[0]
-
-        # approximating last days infections
-        days.loc[last_index]["infected"] = days.loc[last_index]["infected"] / 2  # divider
+        seven_days = days.loc[seven_days_ago: pd.Timestamp(self.date)]
 
         # sum of all seven days
         summed = seven_days["infected"].sum()
@@ -211,7 +167,7 @@ class Analyzer:
         incidence = summed * 100000 / self.population[city]
 
         # return rounded value
-        return round(incidence, 2)
+        return round(incidence)
 
     def visualize(self, city: str) -> str:  # returns path to image
         """
@@ -290,5 +246,61 @@ class Analyzer:
 
 
 if __name__ == '__main__':
-    ana = Analyzer(datetime.date.today() - datetime.timedelta(1))
-    ana.incidence("Sinzig")
+    date = datetime.date(2021, 3, 21)
+    # lists for populations and and incidences
+    their_pop = []
+    our_pop = []
+    their_inc = []
+    our_inc = []
+    infected = []
+    dates = []
+
+    # iterate trough last days
+    for i in range(18):
+        d = date - datetime.timedelta(i)
+        # %Y-%m-%d
+        dates.append(d.strftime("%d.%m"))
+        # get incidence from saved file
+        try:
+            with open(f"../data/ahrweiler-{d}_raw.txt") as f:
+                read = f.read()
+                find = re.search(r"Die Sieben-Tage-Inzidenz für den Kreis Ahrweiler liegt bei (\d+) Neuinfektionen", read)
+                official_inc = int(find.group(1))
+        except FileNotFoundError:
+            continue
+        their_inc.append(official_inc)
+
+        # load dataframe from specific date
+        ana = Analyzer(d)
+        frame: pd.DataFrame = ana.diffframes["Kreis"]
+        # slice 7 days for incidence
+        slc = frame["infected"][len(frame)-7: len(frame)]
+        slc_sum = slc.sum()
+
+        infected.append(slc_sum)
+
+        # Own incidence
+        own_inc = ana.incidence("Kreis")
+        our_inc.append(round(own_inc))
+
+        # Used population: infected * 100k / official incidence
+        tp = int(slc_sum * 100000 / round(own_inc))
+
+        their_pop.append(tp)
+        our_pop.append(ana.population["Kreis"])
+
+    print("Infected:")
+    print(f"DT: {dates}")
+    print(f"IF: {infected}")
+    print()
+    print("Incidences:")
+    print(f"TI: {their_inc}")
+    print(f"OI: {our_inc}")
+    print(f"DF: {np.array(their_inc) - np.array(our_inc)}")
+    print()
+    print("Population:")
+    print(f"TP: {their_pop}")
+    print(f"OP: {our_pop}")
+    print(f"DF: {np.array(their_pop) - np.array(our_pop)}")
+
+
