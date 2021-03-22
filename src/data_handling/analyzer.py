@@ -166,7 +166,7 @@ class Analyzer:
         incidence = summed * 100000 / self.population[city]
 
         # return rounded value
-        return round(incidence, 2)
+        return round(incidence)
 
     def visualize(self, city: str) -> str:  # returns path to image
         """
