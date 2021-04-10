@@ -38,6 +38,7 @@ def handle_callback(update: Update, context: CallbackContext):
         'contact': incom.contact,
         'more': incom.menu_more,
         'help': incom.bot_help,
+        'test_centers': incom.test_centers,
         
         'menu_show': incom.menu_show,
         'menu_sub': incom.menu_sub,

@@ -3,6 +3,8 @@ import logging
 
 from telegram import error
 
+import commands.keyboards as kb
+
 
 def setup(wrtr):
     """passing csv access object to this"""
@@ -27,7 +29,7 @@ def send_to_all(bot, message: str) -> str:
         logging.info("SENDING notification to all")
         # try to send message
         try:
-            bot.send_message(text=message, chat_id=chat.id)
+            bot.send_message(text=message, chat_id=chat.id, reply_markup=kb.inline_menu)
         except error.Unauthorized:
             blocked += 1
     feedback = f"Reached {attempts - blocked} of {attempts} subscribers"
