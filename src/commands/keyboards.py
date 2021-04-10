@@ -120,7 +120,8 @@ inline_more = InlineKeyboardMarkup([[back_button_soft,
                                      InlineKeyboardButton('Über Bot', callback_data='about'),
                                      InlineKeyboardButton('Kontakt', callback_data='contact')],
                                     [InlineKeyboardButton('Infos zur Berechnung', callback_data='methods'),
-                                     InlineKeyboardButton('Teilen', callback_data='share')]])
+                                     InlineKeyboardButton('Teilen', callback_data='share')],
+                                    [InlineKeyboardButton('Teststellen in der Umgebung', callback_data='test_centers')]])
 
 # menu for showing graphs
 _inline_show, _inline_show_soft = gen_city_menu('clearshow')

@@ -105,3 +105,16 @@ def contact(query):
                             text='Verbesserungsvorschläge und Fehler können Sie direkt auf GitHub äußern:\n'
                                  'https://github.com/nonchris/covid-data-bot/issues\n'
                                  'Ansonsten können Sie eine Mail an covidbot@nonchris.eu schreiben.')
+
+
+def test_centers(query):
+    query.edit_message_text(reply_markup=kb.inline_more,
+                            parse_mode='MarkdownV2',
+                            text='Homepage des DRK Kreis Ahrweiler\:\n'
+                                 '[DRK Teststellen im Kreis Ahrweiler](www.kv-aw.drk.de/corona-schnelltest)\n\n'
+                                 'Homepage des Landes Rheinlandpfalz\:\n'
+                                 '[Übersicht RLP](https://covid-19-support.lsjv.rlp.de/hilfe/covid-19-test-dashboard/)\n\n'
+                                 'Homepage der Stadt Bonn\:\n'
+                                 '[Teststellen in Bonn](https://www.bonn.de/themen-entdecken/gesundheit-verbraucherschutz/informationen-zu-coronavirus-testungen.php#Wo_gibt_es_kostenlose_Corona-Schnelltests-3F)\n\n'
+                                 'Hinweis\: Es handelt sich hierbei um Links zu externen Websites\.\n'
+                                 'Für den Inhalt der Seiten wird keine Haftung übernommen\.')
