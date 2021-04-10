@@ -95,8 +95,10 @@ def soft_back(query):
 
 def share(query):
     query.edit_message_text(reply_markup=kb.inline_more,
-                            text='Tägliche Updates zu den Corona Fallzahlen im Kreis Ahrweiler:\n'
-                            't.me/aw_covidbot')
+                            text='Kopieren Sie diese Nachricht und senden Sie sie an die Person mit der Sie den Bot teilen möchten:\n\n'
+                                 'Tägliche Updates zu den Corona Fallzahlen im Kreis Ahrweiler:\n'
+                                 't.me/aw_covidbot')
+
 
 def contact(query):
     query.edit_message_text(reply_markup=kb.inline_more,
