@@ -111,7 +111,7 @@ def test_centers(query):
     query.edit_message_text(reply_markup=kb.inline_more,
                             parse_mode='MarkdownV2',
                             text='Homepage des DRK Kreis Ahrweiler\:\n'
-                                 '[DRK Teststellen im Kreis Ahrweiler](www.kv-aw.drk.de/corona-schnelltest)\n\n'
+                                 '[DRK Teststellen im Kreis Ahrweiler](https://kv-aw.drk.de/corona-schnelltest)\n\n'
                                  'Homepage des Landes Rheinlandpfalz\:\n'
                                  '[Übersicht RLP](https://covid-19-support.lsjv.rlp.de/hilfe/covid-19-test-dashboard/)\n\n'
                                  'Homepage der Stadt Bonn\:\n'
