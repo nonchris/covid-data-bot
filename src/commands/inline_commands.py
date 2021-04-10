@@ -45,11 +45,13 @@ def about(query):
     query.edit_message_text(
         text='Dieser Bot ist ein Open Source Projekt.\n'
               'Das bedeutet, dass Sie den gesamten Quelltext online einsehen können.\n\n'
-              'Das Projekt steht weder mit dem Kreis Ahrweiler'
+              'Das Projekt steht weder mit dem Kreis Ahrweiler '
               'noch mit einer anderen Behörde in Verbindung und ist für Sie völlig kostenlos.\n'
-              'Für Richtigkeit und Vollständigkeit der Daten wird keine Haftung übernommen.\n'
+              'Für Richtigkeit und Vollständigkeit der Daten wird keine Haftung übernommen.\n\n'
               'Der offizielle Quellcode des Bots:\n'
-              'https://github.com/nonchris/covid-data-bot',
+              'https://github.com/nonchris/covid-data-bot\n\n'
+              'Quelle der Daten:\n'
+              'https://www.kreis-ahrweiler.de/presseaktuell.php',
         reply_markup=kb.inline_more,)
 
 
