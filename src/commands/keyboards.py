@@ -105,7 +105,9 @@ def gen_city_menu(prefix: str) -> Tuple[List[List[InlineKeyboardButton]], List[L
 # main menu
 inline_menu = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callback_data='menu_sub'),
                                      InlineKeyboardButton('Graphen', callback_data='menu_show'),
-                                     InlineKeyboardButton('Mehr', callback_data='more')]])
+                                     InlineKeyboardButton('Mehr', callback_data='more')],
+                                    [InlineKeyboardButton('Übersicht der DRK Teststellen',
+                                                          url='www.kv-aw.drk.de/corona-schnelltest')]])
 
 # start menu - same as above just with other labeled 'more button'
 inline_start = InlineKeyboardMarkup([[InlineKeyboardButton('Abonnieren', callback_data='menu_sub'),
