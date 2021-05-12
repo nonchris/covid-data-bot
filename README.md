@@ -1,3 +1,14 @@
+# Disclaimer
+**Sadly this project is no longer maintained.**  
+**The website accessed for data was comletely relaunched and the implemented scraping process doesn't work anymore.**  
+
+
+Interested in the bot-structure itself?  
+Have a look at my ready to use **bot-template** including inline-query handling and a database using SQLAchemy.  
+It's the essence of this project combined with parts from my other telegram projects:    
+https://github.com/nonchris/telegram-bot
+
+
 # covid-update-telegram-bot
 This bot sends automated updates via telegram, when new covid-numbers are published on the local website.
 
